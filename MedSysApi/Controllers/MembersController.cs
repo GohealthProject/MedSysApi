@@ -30,7 +30,19 @@ namespace MedSysApi.Controllers
           }
             return await _context.Members.ToListAsync();
         }
+        [HttpGet("name/{name}")]
+        public async Task<ActionResult<Member>> GetMember(string name)
+        {
+            if (_context.Members == null)
+                return NotFound();
 
+            Member? member = await _context.Members.FirstOrDefaultAsync(n => n.MemberName == name|| n.MemberEmail ==name||n.MemberPhone==name);
+            if (member == null)
+                return NotFound();
+
+            return member;
+        }
+       
         // GET: api/Members/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Member>> GetMember(int id)
