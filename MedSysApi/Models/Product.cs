@@ -19,11 +19,11 @@ public partial class Product
 
     public string Description { get; set; }
 
-    public byte[] Photo { get; set; }
-
     public int? UnitsInStock { get; set; }
 
     public bool? Discontinued { get; set; }
+
+    public string FimagePath { get; set; }
 
     public virtual ICollection<OrderDetail> OrderDetails { get; set; } = new List<OrderDetail>();
 

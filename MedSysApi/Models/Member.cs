@@ -31,6 +31,8 @@ public partial class Member
 
     public string MemberAccount { get; set; }
 
+    public string MemberImage { get; set; }
+
     public virtual ICollection<Comment> Comments { get; set; } = new List<Comment>();
 
     public virtual ICollection<HealthReport> HealthReports { get; set; } = new List<HealthReport>();
