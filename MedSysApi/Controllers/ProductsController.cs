@@ -33,20 +33,20 @@ namespace MedSysApi.Controllers
           }
             return await _context.Products.ToListAsync();
         }
-        [HttpGet("category/{categoryID}")]
-        public async Task<ActionResult<Product>> GetCategory(int categoryID)
+        [HttpGet("{id}")]
+        public async Task<ActionResult<Product>> GetProduct(int id)
         {
             return Content("hello");
         }
         // GET: api/Products/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<Product>> GetProduct(int id)
+        [HttpGet("category/{categoryID}")]
+        public async Task<ActionResult<Product>> CategoryIDGetProduct(int categoryID)
         {
           if (_context.Products == null)
           {
               return NotFound();
           }
-            var product = _context.ProductsCategories.Where(n => n.CategoriesId == id)
+            var product = _context.ProductsCategories.Where(n => n.CategoriesId == categoryID)
                 .Include(n => n.ProductsClassifications)
                 .ThenInclude(n => n.Product);
 
