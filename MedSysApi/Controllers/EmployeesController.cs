@@ -51,9 +51,15 @@ namespace MedSysApi.Controllers
 
         // PUT: api/Employees/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutEmployee(int id, Employee employee)
+        [HttpPut("Up/{id}")]
+        public  IActionResult PutE([FromBody] Employee employee)
         {
+            return Ok();
+        }
+        [HttpPut("{id}")]
+        public async Task<IActionResult> PutEmployee(int id, [FromBody] Employee employee)
+        {
+ 
             if (id != employee.EmployeeId)
             {
                 return BadRequest();
