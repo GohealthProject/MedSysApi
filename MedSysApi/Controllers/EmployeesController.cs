@@ -52,9 +52,41 @@ namespace MedSysApi.Controllers
 
         // PUT: api/Employees/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutEmployee(int id, Employee employee)
+        [HttpPut("Up/{id}")]
+        public  IActionResult PutE(int id)
         {
+            byte[] img = null;
+            
+            var file = Request.Form.Files;
+            using(var memoryStream =  new MemoryStream())
+            {
+                file[0].CopyTo(memoryStream);
+                img =memoryStream.ToArray();
+            }
+            var emp = Request.Form;
+            int eid = Int32.Parse(emp["EmployeeId"]);
+            string name = emp["EmployeeName"];
+            int cid = Int32.Parse(emp["EmployeeClassId"]);
+            string phone = emp["EmployeePhoneNum"];
+            string email = emp["EmployeeEmail"];
+            string pwd = emp["EmployeePassWord"];
+            
+            var upemp = _context.Employees.Where(n => n.EmployeeId == id).FirstOrDefault();
+            upemp.EmployeeName = name;
+            upemp.EmployeeClassId = cid;
+            upemp.EmployeePhoneNum = phone;
+            upemp.EmployeeEmail = email;
+            upemp.EmployeePassWord = pwd;
+            upemp.EmployeePhoto = img;
+            _context.SaveChanges();
+
+            return Ok();
+
+        }
+        [HttpPut("{id}")]
+        public async Task<IActionResult> PutEmployee(int id, [FromBody] Employee employee)
+        {
+ 
             if (id != employee.EmployeeId)
             {
                 return BadRequest();
