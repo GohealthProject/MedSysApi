@@ -116,7 +116,7 @@ namespace MedSysApi.Controllers
         // POST: api/Employees
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Employee>> PostEmployee(Employee employee)
+        public async Task<ActionResult<Employee>> PostEmployee()
         {
           if (_context.Employees == null)
           {
@@ -124,7 +124,7 @@ namespace MedSysApi.Controllers
           }
 
             byte[] img = null;
-
+            var data = Request.Form["employeeBirthDate"];
             var file = Request.Form.Files;
             using (var memoryStream = new MemoryStream())
             {
@@ -137,12 +137,13 @@ namespace MedSysApi.Controllers
             string phone = emp["EmployeePhoneNum"];
             string email = emp["EmployeeEmail"];
             string pwd = emp["EmployeePassWord"];
-
+            DateTime birth = DateTime.Parse(emp["employeeBirthDate"]);
             Employee emp2 = new Employee()
             {
                 EmployeeName = name,
                 EmployeeClassId = cid,
                 EmployeePhoneNum = phone,
+                EmployeeBirthDate = birth,
                 EmployeeEmail = email,
                 EmployeePassWord = pwd,
                 EmployeePhoto = img
@@ -152,7 +153,7 @@ namespace MedSysApi.Controllers
             _context.Employees.Add(emp2);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetEmployee", new { id = employee.EmployeeId }, employee);
+            return Content("ok");
         }
 
         // DELETE: api/Employees/5
