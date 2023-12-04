@@ -69,7 +69,8 @@ namespace MedSysApi.Controllers
             string phone = emp["EmployeePhoneNum"];
             string email = emp["EmployeeEmail"];
             string pwd = emp["EmployeePassWord"];
-            
+
+
             var upemp = _context.Employees.Where(n => n.EmployeeId == id).FirstOrDefault();
             upemp.EmployeeName = name;
             upemp.EmployeeClassId = cid;
@@ -121,7 +122,34 @@ namespace MedSysApi.Controllers
           {
               return Problem("Entity set 'MedSysContext.Employees'  is null.");
           }
-            _context.Employees.Add(employee);
+
+            byte[] img = null;
+
+            var file = Request.Form.Files;
+            using (var memoryStream = new MemoryStream())
+            {
+                file[0].CopyTo(memoryStream);
+                img = memoryStream.ToArray();
+            }
+            var emp = Request.Form;
+            string name = emp["EmployeeName"];
+            int cid = Int32.Parse(emp["EmployeeClassId"]);
+            string phone = emp["EmployeePhoneNum"];
+            string email = emp["EmployeeEmail"];
+            string pwd = emp["EmployeePassWord"];
+
+            Employee emp2 = new Employee()
+            {
+                EmployeeName = name,
+                EmployeeClassId = cid,
+                EmployeePhoneNum = phone,
+                EmployeeEmail = email,
+                EmployeePassWord = pwd,
+                EmployeePhoto = img
+
+            };
+
+            _context.Employees.Add(emp2);
             await _context.SaveChangesAsync();
 
             return CreatedAtAction("GetEmployee", new { id = employee.EmployeeId }, employee);
