@@ -11,11 +11,11 @@ namespace MedSysApi.Controllers
     public class EmailController : ControllerBase
     {
         [HttpPost]
-        public IActionResult SendEmail(string body,string MailTo)
+        public IActionResult SendEmail(string body,string address)
         {            
             var email = new MimeMessage();
             email.From.Add(MailboxAddress.Parse("gohealth790@gmail.com"));
-            email.To.Add(MailboxAddress.Parse(MailTo));
+            email.To.Add(MailboxAddress.Parse(address));
             email.Subject = "【GO健康】帳號驗證通知信";
             email.Body = new TextPart(TextFormat.Html) { Text = body };
 
