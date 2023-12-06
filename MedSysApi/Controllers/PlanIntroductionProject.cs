@@ -7,46 +7,63 @@ namespace MedSysApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class planComeparisonController : ControllerBase
+    public class PlanIntroductionProjectController : ControllerBase
     {
-
         private readonly MedSysContext _context;
 
-        public planComeparisonController(MedSysContext context)
+        public PlanIntroductionProjectController(MedSysContext context)
         {
             _context = context;
         }
 
-        // GET: api/<planComeparisonController>
+        //======範本區=====
+
+        // GET: api/<PlanIntroductionProject>
         [HttpGet]
         public IEnumerable<string> Get()
         {
             return new string[] { "value1", "value2" };
         }
 
-        // GET api/<planComeparisonController>/5
+        // GET api/<PlanIntroductionProject>/5
         [HttpGet("{id}")]
         public string Get(int id)
         {
             return "value";
         }
 
-        // POST api/<planComeparisonController>
+
+        // POST api/<PlanIntroductionProject>
         [HttpPost]
         public void Post([FromBody] string value)
         {
         }
 
-        // PUT api/<planComeparisonController>/5
+        // PUT api/<PlanIntroductionProject>/5
         [HttpPut("{id}")]
         public void Put(int id, [FromBody] string value)
         {
         }
 
-        // DELETE api/<planComeparisonController>/5
+
+        // DELETE api/<PlanIntroductionProject>/5
         [HttpDelete("{id}")]
         public void Delete(int id)
         {
+        }
+        //======範本區=====
+
+
+        // PlanNameGetGET api/<PlanIntroductionProject>/5
+        [HttpGet("{id}")]
+        public async Task<ActionResult<Plan>> PlanNameGet(int id)
+        {
+            if (_context.Plans==null) { 
+            return NotFound();
+            }
+            var plan=await _context.Plans.FindAsync(id);
+            if (plan!=null) { return NotFound(); }
+            return plan;
         }
     }
 }

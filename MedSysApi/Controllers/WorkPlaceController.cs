@@ -8,7 +8,7 @@ namespace MedSysApi.Controllers
         private readonly MedSysContext _context;
         public IActionResult Index(MedSysContext  context)
         {
-            _context=context;
+           
             return View();
         }
     }
