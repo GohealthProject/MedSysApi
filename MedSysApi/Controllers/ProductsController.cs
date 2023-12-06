@@ -38,12 +38,7 @@ namespace MedSysApi.Controllers
         {
             return Content("hello");
         }
-        [HttpGet("Key/key={keyString}&id={id}")]
-        public IActionResult KeyProduct(string keyString,int id)
-        {
-            var q = _context.Members.Where(n => n.MemberId == id).Include(n => n.Orders).ThenInclude(n => n.OrderDetails);
-            return Content("hello");
-        }
+        
         // GET: api/Products/5
         [HttpGet("category/{categoryID}")]
         public async Task<ActionResult<Product>> CategoryIDGetProduct(int categoryID)
