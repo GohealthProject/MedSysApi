@@ -173,6 +173,10 @@ namespace MedSysApi.Controllers
         [HttpDelete("{id}")]
         public IActionResult DeleteMember(int id)
         {
+            ModelBuilder modelBuilder = new ModelBuilder();
+
+            
+
             if (_context.Members == null)
             {
                 return NotFound();
@@ -180,7 +184,7 @@ namespace MedSysApi.Controllers
             var member = _context.Members.Find(id);//找到會員
 
             var od = _context.Orders.Where(n => n.MemberId == id);//找到會員的所有訂單
-            var hp = _context.HealthReports.Where(n => n.MemberId==id);//找到會員的所有健康報告
+            var hp = _context.HealthReports.Where(n => n.MemberId == id);//找到會員的所有健康報告
             var rev = _context.Reserves.Where(n => n.MemberId == id);//找到會員所有的預約
             List<int> revID = new List<int>(); //找到所有健康報告的ID 
             List<int> resSubID = new List<int>(); //找到所有預約的ID
@@ -188,17 +192,17 @@ namespace MedSysApi.Controllers
             {
                 revID.Add(item.ReportId);
             }
+            
+
             var revdet = _context.ReportDetails.Where(n => revID.Contains((int)n.ReportId)); //用找到的健康報告ID去刪除所有該ID的詳細項目
             foreach(var item in revdet) //刪掉所有健康報告詳細
             {
                 _context.ReportDetails.Remove(item);
             } //把該會員所有健康報告項目ID刪掉
-            _context.SaveChanges();
             foreach(var item in hp)//刪掉所有健康報告
             {
                 _context.HealthReports.Remove(item);
             } //把該會員所有健康報告刪掉
-            _context.SaveChanges(true);
 
             foreach(var item in rev) //找到所有預約的ID
             {
@@ -209,13 +213,11 @@ namespace MedSysApi.Controllers
             {
                 _context.ReservedSubs.Remove(item);
             }
-            _context.SaveChanges();
 
             foreach(var item in rev) //把所有預約刪掉
             {
                 _context.Reserves.Remove(item);
             }
-            _context.SaveChanges();
             List<int> oid = new List<int>();
 
             foreach(var item in od) //找到該會員所有訂單的ID
@@ -228,12 +230,11 @@ namespace MedSysApi.Controllers
             {
                 _context.OrderDetails.Remove(item);
             } //刪掉該會員所有訂單詳細
-            _context.SaveChanges();
+
             foreach(var o in od)
             {
                 _context.Orders.Remove(o);
             } //刪掉該會員所有訂單
-            _context.SaveChanges();
             if (member == null)
             {
                 return NotFound();
