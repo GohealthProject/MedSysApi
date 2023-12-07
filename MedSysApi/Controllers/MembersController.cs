@@ -63,9 +63,71 @@ namespace MedSysApi.Controllers
 
         // PUT: api/Members/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
+        [HttpPut("Up/{id}")]
+        public IActionResult PutMem(int id)
+        {
+
+            //byte[] img = null;
+
+            //var file = Request.Form.Files;
+            //using (var memoryStream = new MemoryStream())
+            //{
+            //    file[0].CopyTo(memoryStream);
+            //    img = memoryStream.ToArray();
+            //}
+
+            var mem = Request.Form;
+            int mid = Int32.Parse(mem["MemberId"]);
+            string name = mem["MemberName"];
+            string gender = mem["MemberGender"];
+            string phone = mem["MemberPhone"];
+            string email = mem["MemberEmail"];
+            string address = mem["MemberAddress"];
+            string contact = mem["MemberContact"];
+            string nick = mem["MemberNick"];
+            string pwd = mem["MemberPassWord"];
+
+            var upmem = _context.Members.Where(n => n.MemberId == id).FirstOrDefault();
+            upmem.MemberName = name;
+            upmem.MemberGender = gender;
+            upmem.MemberPhone = phone;
+            upmem.MemberEmail = email;
+            upmem.MemberAddress = address;
+            upmem.MemberContactNumber = contact;
+            upmem.MemberNickname = nick;
+            upmem.MemberPassword = pwd;
+            _context.SaveChanges();
+
+            return Ok();
+        }
+
+            // PUT: api/Members/5
+            // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+            [HttpPut("{id}")]
         public async Task<IActionResult> PutMember(int id, Member member)
         {
+            var mem = Request.Form;
+            int mid = Int32.Parse(mem["MemberId"]);
+            string name = mem["MemberName"];
+            string gender = mem["MemberGender"];
+            string phone = mem["MemberPhone"];
+            string email = mem["MemberEmail"];
+            string address = mem["MemberAddress"];
+            string contact = mem["MemberContact"];
+            string nick = mem["MemberNick"];
+            string pwd = mem["MemberPassWord"];
+
+            var upmem = _context.Members.Where(n => n.MemberId == id).FirstOrDefault();
+            upmem.MemberName = name;
+            upmem.MemberGender = gender;
+            upmem.MemberPhone = phone;
+            upmem.MemberEmail = email;
+            upmem.MemberAddress = address;
+            upmem.MemberContactNumber = contact;
+            upmem.MemberNickname = nick;
+            upmem.MemberPassword = pwd;
+            _context.SaveChanges();
+
             if (id != member.MemberId)
             {
                 return BadRequest();
