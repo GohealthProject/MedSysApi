@@ -10,28 +10,17 @@ namespace MedSysApi.Controllers
     [ApiController]
     public class EmailController : ControllerBase
     {
+        private readonly IEmailService _emailService;
+
+        public EmailController(IEmailService emailService)
+        {
+            _emailService = emailService;
+        }
+
         [HttpPost]
-        public IActionResult SendEmail(string body,string MailTo)
-        {            
-            var email = new MimeMessage();
-            email.From.Add(MailboxAddress.Parse("gohealth790@gmail.com"));
-            email.To.Add(MailboxAddress.Parse(MailTo));
-            email.Subject = "【GO健康】帳號驗證通知信";
-            email.Body = new TextPart(TextFormat.Html) { Text = body };
-
-            using var smtp = new SmtpClient();
-            smtp.Connect("smtp.gmail.com", 587, false);
-            smtp.Authenticate("gohealth790@gmail.com", "aylk gntm dwab njzp");
-            smtp.Send(email);
-            smtp.Disconnect(true);
-
-            if (email == null)
-            {
-                return BadRequest();
-            }
-
-
-
+        public IActionResult SendEmail(CEmailDto request)
+        {
+            _emailService.SendEmail(request);
             return Ok();
         }
     }
