@@ -33,6 +33,11 @@ namespace MedSysApi.Controllers
           }
             return await _context.Products.ToListAsync();
         }
+        [HttpGet("{key}&{page}")]
+        public IActionResult getProductPage(string key , int page)
+        {
+            return Ok();
+        }
         [HttpGet("{id}")]
         public async Task<ActionResult<Product>> GetProduct(int id)
         {
