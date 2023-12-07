@@ -171,20 +171,76 @@ namespace MedSysApi.Controllers
 
         // DELETE: api/Members/5
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteMember(int id)
+        public IActionResult DeleteMember(int id)
         {
             if (_context.Members == null)
             {
                 return NotFound();
             }
-            var member = await _context.Members.FindAsync(id);
+            var member = _context.Members.Find(id);//找到會員
+
+            var od = _context.Orders.Where(n => n.MemberId == id);//找到會員的所有訂單
+            var hp = _context.HealthReports.Where(n => n.MemberId==id);//找到會員的所有健康報告
+            var rev = _context.Reserves.Where(n => n.MemberId == id);//找到會員所有的預約
+            List<int> revID = new List<int>(); //找到所有健康報告的ID 
+            List<int> resSubID = new List<int>(); //找到所有預約的ID
+            foreach (var item in hp)//找所有健康報告的ID
+            {
+                revID.Add(item.ReportId);
+            }
+            var revdet = _context.ReportDetails.Where(n => revID.Contains((int)n.ReportId)); //用找到的健康報告ID去刪除所有該ID的詳細項目
+            foreach(var item in revdet) //刪掉所有健康報告詳細
+            {
+                _context.ReportDetails.Remove(item);
+            } //把該會員所有健康報告項目ID刪掉
+            _context.SaveChanges();
+            foreach(var item in hp)//刪掉所有健康報告
+            {
+                _context.HealthReports.Remove(item);
+            } //把該會員所有健康報告刪掉
+            _context.SaveChanges(true);
+
+            foreach(var item in rev) //找到所有預約的ID
+            {
+                resSubID.Add(item.ReserveId);
+            }
+            var resSub = _context.ReservedSubs.Where(n => resSubID.Contains(n.ReservedId)); //找到所有預約SUB的ID
+            foreach(var item in resSub) //把所有預約SUB刪掉
+            {
+                _context.ReservedSubs.Remove(item);
+            }
+            _context.SaveChanges();
+
+            foreach(var item in rev) //把所有預約刪掉
+            {
+                _context.Reserves.Remove(item);
+            }
+            _context.SaveChanges();
+            List<int> oid = new List<int>();
+
+            foreach(var item in od) //找到該會員所有訂單的ID
+            {
+                int i = item.OrderId;
+                oid.Add(i);
+            } 
+            var orderDe = _context.OrderDetails.Where(n => oid.Contains((int)n.OrderId)); //找到所有訂單詳細的ID
+            foreach(var item in orderDe)
+            {
+                _context.OrderDetails.Remove(item);
+            } //刪掉該會員所有訂單詳細
+            _context.SaveChanges();
+            foreach(var o in od)
+            {
+                _context.Orders.Remove(o);
+            } //刪掉該會員所有訂單
+            _context.SaveChanges();
             if (member == null)
             {
                 return NotFound();
             }
 
-            _context.Members.Remove(member);
-            await _context.SaveChangesAsync();
+            _context.Members.Remove(member); //在刪掉該會員
+            _context.SaveChanges();
 
             return NoContent();
         }
