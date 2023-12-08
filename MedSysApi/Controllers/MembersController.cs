@@ -79,13 +79,16 @@ namespace MedSysApi.Controllers
             var mem = Request.Form;
             int mid = Int32.Parse(mem["MemberId"]);
             string name = mem["MemberName"];
-            string gender = mem["MemberGender"];
-            string phone = mem["MemberPhone"];
+            string gender = mem["Gender"];
+            string phone = mem["MemberPhoneNum"];
+            string birthDate = mem["MemberBirthDate"];
             string email = mem["MemberEmail"];
             string address = mem["MemberAddress"];
             string contact = mem["MemberContact"];
             string nick = mem["MemberNick"];
             string pwd = mem["MemberPassWord"];
+
+            var file = Request.Form.Files;
 
             var upmem = _context.Members.Where(n => n.MemberId == id).FirstOrDefault();
             upmem.MemberName = name;
@@ -96,6 +99,7 @@ namespace MedSysApi.Controllers
             upmem.MemberContactNumber = contact;
             upmem.MemberNickname = nick;
             upmem.MemberPassword = pwd;
+            upmem.MemberImage = file[0].FileName;
             _context.SaveChanges();
 
             return Ok();

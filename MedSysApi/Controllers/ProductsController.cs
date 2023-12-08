@@ -36,7 +36,21 @@ namespace MedSysApi.Controllers
         [HttpGet("{key}&{page}")]
         public IActionResult getProductPage(string key , int page)
         {
-            return Ok();
+            if (_context.Products == null)
+            {
+                return BadRequest();
+            }
+            
+            int pagecount = 9 * page;
+            var q = _context.Products.Where(n => n.ProductName.Contains(key)).ToList();
+
+            if (page == 1) 
+                return Ok(q.Take(9));
+            else
+            {
+                var g = q.Take(9*page).Skip((page-1)*9);
+                return Ok(g);
+            }
         }
         [HttpGet("{id}")]
         public async Task<ActionResult<Product>> GetProduct(int id)
@@ -132,7 +146,34 @@ namespace MedSysApi.Controllers
 
             return NoContent();
         }
+        [HttpGet("hot/key={keyword}")]
+        public IActionResult hot(string keyword)
+        {
+            var q = _context.OrderDetails.Where(od => od.Product.ProductName.Contains(keyword)).GroupBy(od => od.ProductId).Select(n => new
+            {
+                pid = n.Key,
+                qua = n.Sum(n => n.ProductId)
+            }).OrderByDescending(n => n.qua).ToList(); ;
+            List<Product> list = new List<Product>();
+            foreach(var item in q)
+            {
+                var pro = _context.Products.Where(n => n.ProductId == item.pid).FirstOrDefault();
+                list.Add((Product)pro);
+            }
 
+
+            return Ok(list);
+        }
+        [HttpGet("top/key={keyword}")]
+        public IActionResult top5(string keyword)
+        {
+            return Ok();
+        }
+        [HttpGet("news/key={keyword}")]
+        public IActionResult news(string keyword)
+        {
+            return Ok();
+        }
         private bool ProductExists(int id)
         {
             return (_context.Products?.Any(e => e.ProductId == id)).GetValueOrDefault();
