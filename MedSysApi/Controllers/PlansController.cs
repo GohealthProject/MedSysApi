@@ -91,20 +91,17 @@ namespace MedSysApi.Controllers
 
             return NoContent();
         }
-
+        
         // POST: api/Plans
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Plan>> PostPlan(Plan plan)
+        public IActionResult PostPlan()
         {
-          if (_context.Plans == null)
-          {
-              return Problem("Entity set 'MedSysContext.Plans'  is null.");
-          }
-            _context.Plans.Add(plan);
-            await _context.SaveChangesAsync();
+            var q = Request.Form;
 
-            return CreatedAtAction("GetPlan", new { id = plan.PlanId }, plan);
+            var pjid = q["Cprjchk"];
+
+            return Ok();
         }
 
         // DELETE: api/Plans/5
