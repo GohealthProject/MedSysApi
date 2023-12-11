@@ -149,11 +149,16 @@ namespace MedSysApi.Controllers
         [HttpGet("hot/key={keyword}")]
         public IActionResult hot(string keyword)
         {
-            var q = _context.OrderDetails.Where(od => od.Product.ProductName.Contains(keyword)).GroupBy(od => od.ProductId).Select(n => new
+            var q = _context.OrderDetails
+                .Where(od => od.Product.ProductName
+                .Contains(keyword))
+                .GroupBy(od => od.ProductId)
+                .Select(n => new
             {
                 pid = n.Key,
-                qua = n.Sum(n => n.ProductId)
-            }).OrderByDescending(n => n.qua).ToList(); ;
+                qua = n.Sum(n => n.Quantity)
+            }).OrderBy(n => n.qua).ToList(); ;
+          
             List<Product> list = new List<Product>();
             foreach(var item in q)
             {
@@ -179,6 +184,34 @@ namespace MedSysApi.Controllers
                 list.Add(item);
             }   
             return Ok(list);
+        }
+        [HttpGet("sort/{keyword}&{sort}")]
+        public IActionResult sort(string keyword , string sort)
+        {
+            List<Product> list = new List<Product>();
+            if(sort == "Up")
+            {
+                var q = _context.Products.Where(n=>n.ProductName.Contains(keyword)).OrderBy(n => n.UnitPrice);
+                foreach (var item in q)
+                {
+                    list.Add(item);
+                }
+                return Ok(list);
+            }
+            else if(sort=="low")
+            {
+                var q = _context.Products.Where(n=>n.ProductName.Contains(keyword)).OrderByDescending(n => n.UnitPrice);
+                foreach (var item in q)
+                {
+                    list.Add(item);
+                }
+                return Ok(list);
+            }
+            else
+            {
+                return BadRequest();
+            }
+
         }
         private bool ProductExists(int id)
         {
