@@ -22,7 +22,7 @@ namespace MedSysApi.Controllers
         {
             _context = context;
         }
-
+        
         // GET: api/Products
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Product>>> GetProducts()
@@ -172,7 +172,13 @@ namespace MedSysApi.Controllers
         [HttpGet("news/key={keyword}")]
         public IActionResult news(string keyword)
         {
-            return Ok();
+            var q = _context.Products.Where(n => n.ProductName.Contains(keyword)).OrderByDescending(n => n.ProductId);
+            List<Product> list = new List<Product>();
+            foreach(var item in q)
+            {
+                list.Add(item);
+            }   
+            return Ok(list);
         }
         private bool ProductExists(int id)
         {
