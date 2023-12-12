@@ -6,6 +6,8 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using MedSysApi.Models;
+using System.Net;
+using static System.Net.WebRequestMethods;
 
 namespace MedSysApi.Controllers
 {
@@ -14,10 +16,12 @@ namespace MedSysApi.Controllers
     public class MembersController : ControllerBase
     {
         private readonly MedSysContext _context;
+        private readonly IWebHostEnvironment _host;
 
-        public MembersController(MedSysContext context)
+        public MembersController(MedSysContext context, IWebHostEnvironment host)
         {
             _context = context;
+            _host = host;
         }
 
         // GET: api/Members
@@ -64,7 +68,7 @@ namespace MedSysApi.Controllers
         // PUT: api/Members/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("Up/{id}")]
-        public IActionResult PutMem(int id)
+        public IActionResult PutMem(int id, IFormFile fileN)
         {
 
             //byte[] img = null;
@@ -75,6 +79,17 @@ namespace MedSysApi.Controllers
             //    file[0].CopyTo(memoryStream);
             //    img = memoryStream.ToArray();
             //}
+            string p1 = "https://localhost:7078/img/MemberImg/";
+
+            //Upload File to https://localhost:7078/img/MemberImg/
+            string p2 = "/img/MemberImg/";
+            string p3 = fileN.FileName;
+            string path = p1 + p2 + p3;
+            using (var stream = new FileStream(path, FileMode.Create))
+            {
+                fileN.CopyTo(stream);
+            }
+
 
             var mem = Request.Form;
             int mid = Int32.Parse(mem["MemberId"]);
@@ -99,6 +114,7 @@ namespace MedSysApi.Controllers
             upmem.MemberContactNumber = contact;
             upmem.MemberNickname = nick;
             upmem.MemberPassword = pwd;
+            string formimg = file[0].FileName;
             upmem.MemberImage = file[0].FileName;
             _context.SaveChanges();
 
