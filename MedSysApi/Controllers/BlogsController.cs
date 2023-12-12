@@ -53,32 +53,51 @@ namespace MedSysApi.Controllers
         // PUT: api/Blogs/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutBlog(int id, Blog blog)
+        public async Task<IActionResult> EditBlog(int id)
         {
-            if (id != blog.BlogId)
-            {
-                return BadRequest();
-            }
-
-            _context.Entry(blog).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!BlogExists(id))
-                {
+            try 
+            { 
+                var blog = await _context.Blogs.FindAsync(id);
+                Tinify.Key = "rhkRy28T0Xz4JDdQ1y45cbxNTW47Gm46";//
+                if (blog == null) 
+                { 
                     return NotFound();
                 }
-                else
+                //獲取put請求的資料
+                var blogData = Request.Form;
+                string title = blogData["Title"];
+                int articleClassId = int.Parse(blogData["ArticleClassId"]);
+                string content = blogData["Content"];
+                int employeeId = int.Parse(blogData["EmployeeId"]);
+                var files = Request.Form.Files;
+                
+                blog.Title = title;
+                blog.ArticleClassId = articleClassId;
+                blog.Content = content;
+                blog.EmployeeId = employeeId;
+                if (files.Any()) 
                 {
-                    throw;
+                    if (files[0] != null && files[0].Length > 0)
+                    {
+                        using (MemoryStream ms = new MemoryStream())
+                        {
+                            files[0].CopyTo(ms);
+                            var source = Tinify.FromBuffer(ms.ToArray());
+                            var resize = await source.ToBuffer();
+                            blog.BlogImage = resize;
+                        }
+                    }
                 }
+                
+                
+                _context.Entry(blog).State = EntityState.Modified;
+                await _context.SaveChangesAsync();
             }
-
-            return NoContent();
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"An error occured:{ex.Message}");
+            }
+            return Ok();
         }
 
         // POST: api/Blogs
