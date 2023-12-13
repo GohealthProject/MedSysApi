@@ -39,13 +39,7 @@ namespace MedSysApi.Controllers
             return Content("hello");
         }
         // GET: api/Products/5
-        [HttpGet("{cateby/id}")]
-        public async Task<ActionResult<Product>> GetProduct(string name)
-        {
-            var x = _context.Products.Where(n => n.ProductName.Contains(name)).Select(n => n);
 
-            return NotFound();
-        }
         [HttpGet("{id}")]
         public async Task<ActionResult<Product>> GetProduct(int id)
         {
