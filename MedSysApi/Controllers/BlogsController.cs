@@ -25,21 +25,42 @@ namespace MedSysApi.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Blog>>> GetBlogs()
         {
-          if (_context.Blogs == null)
-          {
-              return NotFound();
-          }
+            if (_context.Blogs == null)
+            {
+                return NotFound();
+            }
             return await _context.Blogs.ToListAsync();
         }
+
+        [HttpGet("latest6")]
+        public async Task<ActionResult<IEnumerable<Blog>>> GetLatest6Blogs()
+        {
+            if (_context.Blogs == null)
+            {
+                return NotFound();
+            }
+            var blogs = await _context.Blogs.Include(blog => blog.ArticleClass).Include(blog => blog.Employee).OrderByDescending(blog => blog.BlogId).Take(6).ToListAsync();
+
+            var infoIonlyWant = blogs.Select(blog => new
+            {
+                BlogId = blog.BlogId,
+                Title = blog.Title,
+                Author = blog.Employee.EmployeeName,
+                ArticleClass = blog.ArticleClass.BlogCategory1,
+                CreatedAt = blog.CreatedAt,
+            });
+            return Ok(infoIonlyWant);
+        }
+
 
         // GET: api/Blogs/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Blog>> GetBlog(int id)
         {
-          if (_context.Blogs == null)
-          {
-              return NotFound();
-          }
+            if (_context.Blogs == null)
+            {
+                return NotFound();
+            }
             var blog = await _context.Blogs.FindAsync(id);
 
             if (blog == null)
@@ -55,12 +76,12 @@ namespace MedSysApi.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> EditBlog(int id)
         {
-            try 
-            { 
+            try
+            {
                 var blog = await _context.Blogs.FindAsync(id);
                 Tinify.Key = "rhkRy28T0Xz4JDdQ1y45cbxNTW47Gm46";//
-                if (blog == null) 
-                { 
+                if (blog == null)
+                {
                     return NotFound();
                 }
                 //獲取put請求的資料
@@ -70,12 +91,12 @@ namespace MedSysApi.Controllers
                 string content = blogData["Content"];
                 int employeeId = int.Parse(blogData["EmployeeId"]);
                 var files = Request.Form.Files;
-                
+
                 blog.Title = title;
                 blog.ArticleClassId = articleClassId;
                 blog.Content = content;
                 blog.EmployeeId = employeeId;
-                if (files.Any()) 
+                if (files.Any())
                 {
                     if (files[0] != null && files[0].Length > 0)
                     {
@@ -88,8 +109,8 @@ namespace MedSysApi.Controllers
                         }
                     }
                 }
-                
-                
+
+
                 _context.Entry(blog).State = EntityState.Modified;
                 await _context.SaveChangesAsync();
             }
@@ -112,9 +133,9 @@ namespace MedSysApi.Controllers
                 Tinify.Key = "rhkRy28T0Xz4JDdQ1y45cbxNTW47Gm46";
                 string title = blog["Title"];
                 int ArticleClassId = int.Parse(blog["ArticleClassId"]);
-                string content = blog["Content"];  
+                string content = blog["Content"];
                 var file = Request.Form.Files;//檔案
-                if (file.Any()) 
+                if (file.Any())
                 {
                     if (file[0] != null && file[0].Length > 0)
                     {
@@ -126,7 +147,7 @@ namespace MedSysApi.Controllers
                             img = resize;
                         }
                     }
-                }             
+                }
                 int employeeId = int.Parse(blog["EmployeeId"]);
                 Blog newBlog = new Blog();
                 newBlog.Title = title;
@@ -140,12 +161,12 @@ namespace MedSysApi.Controllers
                 await _context.SaveChangesAsync();
 
             }
-            catch (Exception ex) 
+            catch (Exception ex)
             {
                 return StatusCode(500, $"An error occured:{ex.Message}");
             }
             return Ok();
-            
+
         }
 
         // DELETE: api/Blogs/5
