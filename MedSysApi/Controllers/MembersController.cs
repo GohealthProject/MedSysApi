@@ -16,12 +16,10 @@ namespace MedSysApi.Controllers
     public class MembersController : ControllerBase
     {
         private readonly MedSysContext _context;
-        private readonly IWebHostEnvironment _host;
 
-        public MembersController(MedSysContext context, IWebHostEnvironment host)
+        public MembersController(MedSysContext context)
         {
             _context = context;
-            _host = host;
         }
 
         // GET: api/Members
@@ -68,7 +66,7 @@ namespace MedSysApi.Controllers
         // PUT: api/Members/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("Up/{id}")]
-        public IActionResult PutMem(int id, IFormFile fileN)
+        public IActionResult PutMem(int id, HttpContent content)
         {
 
             //byte[] img = null;
@@ -79,17 +77,6 @@ namespace MedSysApi.Controllers
             //    file[0].CopyTo(memoryStream);
             //    img = memoryStream.ToArray();
             //}
-            string p1 = "https://localhost:7078/img/MemberImg/";
-
-            //Upload File to https://localhost:7078/img/MemberImg/
-            string p2 = "/img/MemberImg/";
-            string p3 = fileN.FileName;
-            string path = p1 + p2 + p3;
-            using (var stream = new FileStream(path, FileMode.Create))
-            {
-                fileN.CopyTo(stream);
-            }
-
 
             var mem = Request.Form;
             int mid = Int32.Parse(mem["MemberId"]);
