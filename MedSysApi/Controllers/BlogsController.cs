@@ -114,16 +114,19 @@ namespace MedSysApi.Controllers
                 int ArticleClassId = int.Parse(blog["ArticleClassId"]);
                 string content = blog["Content"];  
                 var file = Request.Form.Files;//檔案
-                if (file[0] != null && file[0].Length > 0) 
+                if (file.Any()) 
                 {
-                    using (MemoryStream memoryStream = new MemoryStream())
+                    if (file[0] != null && file[0].Length > 0)
                     {
-                        file[0].CopyTo(memoryStream);
-                        var source = Tinify.FromBuffer(memoryStream.ToArray());
-                        var resize = await source.ToBuffer();
-                        img = resize;
+                        using (MemoryStream memoryStream = new MemoryStream())
+                        {
+                            file[0].CopyTo(memoryStream);
+                            var source = Tinify.FromBuffer(memoryStream.ToArray());
+                            var resize = await source.ToBuffer();
+                            img = resize;
+                        }
                     }
-                }
+                }             
                 int employeeId = int.Parse(blog["EmployeeId"]);
                 Blog newBlog = new Blog();
                 newBlog.Title = title;
