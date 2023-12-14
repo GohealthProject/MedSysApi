@@ -25,7 +25,13 @@ public partial class Product
 
     public string FimagePath { get; set; }
 
+    public int? Likecount { get; set; }
+
     public virtual ICollection<OrderDetail> OrderDetails { get; set; } = new List<OrderDetail>();
 
+    public virtual ICollection<ProductReview> ProductReviews { get; set; } = new List<ProductReview>();
+
     public virtual ICollection<ProductsClassification> ProductsClassifications { get; set; } = new List<ProductsClassification>();
+
+    public virtual ICollection<TrackingList> TrackingLists { get; set; } = new List<TrackingList>();
 }
