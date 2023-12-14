@@ -31,6 +31,26 @@ namespace MedSysApi.Controllers
             }
             return await _context.Blogs.ToListAsync();
         }
+        [HttpGet("popular6")]
+        public async Task<ActionResult<IEnumerable<Blog>>> GetPopular6Blogs()
+        {
+            if (_context.Blogs == null)
+            {
+                return NotFound();
+            }
+            var blogs = await _context.Blogs.Include(blog => blog.ArticleClass).Include(blog => blog.Employee).OrderByDescending(blog => blog.Views).Take(6).ToListAsync();
+
+            var infoIonlyWant = blogs.Select(blog => new
+            {
+                BlogId = blog.BlogId,
+                Title = blog.Title,
+                Author = blog.Employee.EmployeeName,
+                ArticleClass = blog.ArticleClass.BlogCategory1,
+                CreatedAt = blog.CreatedAt,
+            });
+            return Ok(infoIonlyWant);
+        }   
+
 
         [HttpGet("latest6")]
         public async Task<ActionResult<IEnumerable<Blog>>> GetLatest6Blogs()
@@ -40,6 +60,26 @@ namespace MedSysApi.Controllers
                 return NotFound();
             }
             var blogs = await _context.Blogs.Include(blog => blog.ArticleClass).Include(blog => blog.Employee).OrderByDescending(blog => blog.BlogId).Take(6).ToListAsync();
+
+            var infoIonlyWant = blogs.Select(blog => new
+            {
+                BlogId = blog.BlogId,
+                Title = blog.Title,
+                Author = blog.Employee.EmployeeName,
+                ArticleClass = blog.ArticleClass.BlogCategory1,
+                CreatedAt = blog.CreatedAt,
+            });
+            return Ok(infoIonlyWant);
+        }
+
+        [HttpGet("thisCat6")]
+        public async Task<ActionResult<IEnumerable<Blog>>>GetThisCat6Blogs(int id)
+        {
+            if (_context.Blogs == null)
+            {
+                return NotFound();
+            }
+            var blogs = await _context.Blogs.Include(blog => blog.ArticleClass).Include(blog => blog.Employee).Where(blog => blog.ArticleClassId == id).OrderByDescending(blog => blog.BlogId).Take(6).ToListAsync();
 
             var infoIonlyWant = blogs.Select(blog => new
             {
