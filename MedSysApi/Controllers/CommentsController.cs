@@ -105,6 +105,15 @@ namespace MedSysApi.Controllers
             return CreatedAtAction("GetComment", new { id = comment.CommentId }, comment);
         }
 
+        [HttpPost("memberAddComment")]
+        public async Task<ActionResult> memberAddComment() 
+        {
+            int blogId = int.Parse(Request.Form["blogId"]);
+            int memberId = int.Parse(Request.Form["memberId"]);
+            string content = Request.Form["content"];
+            return Ok();
+        }
+
         // DELETE: api/Comments/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteComment(int id)
