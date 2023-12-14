@@ -106,12 +106,35 @@ namespace MedSysApi.Controllers
         }
 
         [HttpPost("memberAddComment")]
-        public async Task<ActionResult> memberAddComment() 
+        public async Task<ActionResult> memberAddComment([FromBody] Comment comment) 
         {
-            int blogId = int.Parse(Request.Form["blogId"]);
-            int memberId = int.Parse(Request.Form["memberId"]);
-            string content = Request.Form["content"];
-            return Ok();
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    Comment newComment = new Comment
+                    {
+                        BlogId = comment.BlogId,
+                        MemberId = comment.MemberId,
+                        EmployeeId = null,
+                        ParentCommentId = null,
+                        Content = comment.Content,
+                        CreatedAt = DateTime.Now,
+                    };
+
+                    _context.Comments.Add(newComment);
+                    await _context.SaveChangesAsync();
+                    return Ok(new { message = "Comment saved successfully" });
+                }
+                catch (Exception ex)
+                {
+                    return StatusCode(500, $"An error occured:{ex.Message}");
+                }
+            }
+            else 
+            {
+                return BadRequest(ModelState);
+            }
         }
 
         // DELETE: api/Comments/5
