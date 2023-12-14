@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using MedSysApi.Models;
+using Newtonsoft.Json;
 
 namespace MedSysApi.Controllers
 {
@@ -19,7 +20,27 @@ namespace MedSysApi.Controllers
         {
             _context = context;
         }
+        [HttpGet("changeLike/{key}&{Reviewid}&{memberid}")]
+        public IActionResult changeLike(string key,int Reviewid,int memberid)
+        {
+            var q = _context.ProductReviews.Where(n => n.ProductReviewId == Reviewid).Include(n => n.Product).FirstOrDefault();
 
+            if(q.MemberId!= memberid)
+                return BadRequest();
+
+            if(key == "good.png")
+            {
+                q.IsLike = false;
+                q.Product.Likecount--;
+            }
+            else
+            {
+                q.IsLike = true;
+                q.Product.Likecount++;
+            }
+            _context.SaveChanges();
+            return Ok();
+        }
         // GET: api/ProductReviews
         [HttpGet]
         public async Task<ActionResult<IEnumerable<ProductReview>>> GetProductReviews()
@@ -38,7 +59,12 @@ namespace MedSysApi.Controllers
               return NotFound();
           }
             var productReviews = _context.ProductReviews.Where(p => p.ProductId == productID).Include(n => n.Member).OrderByDescending(n=>n.Timestamp);
-            return Ok(productReviews);
+            var setting = new JsonSerializerSettings
+            {
+                ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+            };
+            var json = JsonConvert.SerializeObject(productReviews, setting);
+            return Ok(json);
         }
         // GET: api/ProductReviews/5
         [HttpGet("{id}")]
@@ -102,9 +128,14 @@ namespace MedSysApi.Controllers
             productReview.ReviewContent = review;
             productReview.Timestamp = DateTime.Now;
             productReview.IsLike = true;
-            _context.ProductReviews.Add(productReview); 
+            _context.ProductReviews.Add(productReview);
+            Product p =_context.Products.Find(productID) ;
+            p.Likecount++;
             _context.SaveChanges();
-            return Content("留言成功");
+
+            var productReviews = _context.ProductReviews.Where(p => p.ProductId == productID).Include(n => n.Member).OrderByDescending(n => n.ProductReviewId).FirstOrDefault();
+
+            return Ok(productReviews);
         }
         [HttpPost]
         public async Task<ActionResult<ProductReview>> PostProductReview(ProductReview productReview)
