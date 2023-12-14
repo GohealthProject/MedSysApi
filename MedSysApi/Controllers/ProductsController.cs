@@ -70,9 +70,6 @@ namespace MedSysApi.Controllers
                 .Include(n => n.ProductsClassifications)
                 .ThenInclude(n => n.Product);
 
-
-
-
             if (product == null)
             {
                 return NotFound();

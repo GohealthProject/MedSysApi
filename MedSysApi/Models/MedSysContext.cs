@@ -464,6 +464,7 @@ public partial class MedSysContext : DbContext
         {
             entity.Property(e => e.ProductId).HasColumnName("ProductID");
             entity.Property(e => e.FimagePath).HasColumnName("FImagePath");
+            entity.Property(e => e.Likecount).HasColumnName("likecount");
             entity.Property(e => e.UnitPrice).HasColumnType("money");
         });
 
@@ -472,10 +473,20 @@ public partial class MedSysContext : DbContext
             entity.ToTable("ProductReview");
 
             entity.Property(e => e.ProductReviewId).HasColumnName("ProductReviewID");
+            entity.Property(e => e.IsLike).HasColumnName("isLIke");
             entity.Property(e => e.MemberId).HasColumnName("MemberID");
+            entity.Property(e => e.ProductId).HasColumnName("ProductID");
             entity.Property(e => e.Timestamp)
                 .HasColumnType("date")
                 .HasColumnName("timestamp");
+
+            entity.HasOne(d => d.Member).WithMany(p => p.ProductReviews)
+                .HasForeignKey(d => d.MemberId)
+                .HasConstraintName("FK_ProductReview_Members");
+
+            entity.HasOne(d => d.Product).WithMany(p => p.ProductReviews)
+                .HasForeignKey(d => d.ProductId)
+                .HasConstraintName("FK_ProductReview_Products");
         });
 
         modelBuilder.Entity<ProductsCategory>(entity =>
@@ -607,6 +618,14 @@ public partial class MedSysContext : DbContext
             entity.Property(e => e.TrackingListId).HasColumnName("TrackingListID");
             entity.Property(e => e.MemberId).HasColumnName("MemberID");
             entity.Property(e => e.ProductId).HasColumnName("ProductID");
+
+            entity.HasOne(d => d.Member).WithMany(p => p.TrackingLists)
+                .HasForeignKey(d => d.MemberId)
+                .HasConstraintName("FK_TrackingList_Members");
+
+            entity.HasOne(d => d.Product).WithMany(p => p.TrackingLists)
+                .HasForeignKey(d => d.ProductId)
+                .HasConstraintName("FK_TrackingList_Products");
         });
 
         OnModelCreatingPartial(modelBuilder);
