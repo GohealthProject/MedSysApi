@@ -95,6 +95,8 @@ namespace MedSysApi.Controllers
             var upmem = _context.Members.Where(n => n.MemberId == id).FirstOrDefault();
             upmem.MemberName = name;
             upmem.MemberGender = gender;
+            DateTime birthdate = DateTime.Parse(birthDate);
+            upmem.MemberBirthdate = birthdate;
             upmem.MemberPhone = phone;
             upmem.MemberEmail = email;
             upmem.MemberAddress = address;
@@ -117,6 +119,7 @@ namespace MedSysApi.Controllers
             int mid = Int32.Parse(mem["MemberId"]);
             string name = mem["MemberName"];
             string gender = mem["MemberGender"];
+            string birth = mem["MemberBirthDate"];
             string phone = mem["MemberPhone"];
             string email = mem["MemberEmail"];
             string address = mem["MemberAddress"];
@@ -127,6 +130,8 @@ namespace MedSysApi.Controllers
             var upmem = _context.Members.Where(n => n.MemberId == id).FirstOrDefault();
             upmem.MemberName = name;
             upmem.MemberGender = gender;
+            DateTime birthdate = DateTime.Parse(birth);
+            upmem.MemberBirthdate = birthdate;
             upmem.MemberPhone = phone;
             upmem.MemberEmail = email;
             upmem.MemberAddress = address;
