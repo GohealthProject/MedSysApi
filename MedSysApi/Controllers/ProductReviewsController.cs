@@ -37,7 +37,7 @@ namespace MedSysApi.Controllers
             {
               return NotFound();
           }
-            var productReviews = _context.ProductReviews.Where(p => p.ProductId == productID).Include(n => n.Member);
+            var productReviews = _context.ProductReviews.Where(p => p.ProductId == productID).Include(n => n.Member).OrderByDescending(n=>n.Timestamp);
             return Ok(productReviews);
         }
         // GET: api/ProductReviews/5
