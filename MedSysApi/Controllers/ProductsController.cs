@@ -22,7 +22,34 @@ namespace MedSysApi.Controllers
         {
             _context = context;
         }
-        
+        [HttpGet("Suggested/{Pid}")]
+        public IActionResult Suggested(int Pid)
+        {
+            var PidFindCategory = _context.Products.Where(n => n.ProductId == Pid).Select(n => n.ProductsClassifications).SelectMany(n => n); //找到該產品的所有類別
+            List<int> CategoryIDlist = new List<int>();
+            foreach(var item in PidFindCategory)
+            {
+                CategoryIDlist.Add(item.CategoriesId);
+            }
+            var CategoryFindProduct = _context.ProductsClassifications.Where(n => CategoryIDlist.Contains(n.CategoriesId)).Select(n => n.ProductId); //找到類別的所有產品ID
+            List<int>list2 = new List<int>();
+            list2= CategoryFindProduct.ToList();
+
+            var CategoryHighLight = _context.OrderDetails.Where(n => list2.Contains((int)n.ProductId)).GroupBy(n => n.ProductId).Select(n => new
+            {
+                key = n.Key,
+                count = n.Sum(n => n.Quantity)
+            }).OrderByDescending(n=>n.count); //找到該類別的銷量最高的產品
+            List<int> list3 = new List<int>();
+            foreach(var item in CategoryHighLight)
+            {
+                list3.Add((int)item.key);
+            }
+            var q = _context.Products.Where(n => list3.Contains(n.ProductId)).Take(6);
+            List<Product> proList = new List<Product>();
+            proList = q.ToList();
+            return Ok(proList);
+        }
         // GET: api/Products
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Product>>> GetProducts()

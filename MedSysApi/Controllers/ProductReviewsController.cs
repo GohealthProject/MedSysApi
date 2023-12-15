@@ -58,7 +58,7 @@ namespace MedSysApi.Controllers
             {
               return NotFound();
           }
-            var productReviews = _context.ProductReviews.Where(p => p.ProductId == productID).Include(n => n.Member).OrderByDescending(n=>n.Timestamp);
+            var productReviews = _context.ProductReviews.Where(p => p.ProductId == productID).Include(n => n.Member);
             var setting = new JsonSerializerSettings
             {
                 ReferenceLoopHandling = ReferenceLoopHandling.Ignore
