@@ -136,6 +136,88 @@ namespace MedSysApi.Controllers
                 return BadRequest(ModelState);
             }
         }
+        [HttpPost("employeeAddComment")]
+        public async Task<IActionResult> employeeAddComment([FromBody] Comment comment) 
+        {
+            if (ModelState.IsValid)
+            {
+                try 
+                {
+                    Comment newComment = new Comment
+                    {
+                        BlogId = comment.BlogId,
+                        MemberId = null,
+                        EmployeeId = comment.EmployeeId,
+                        ParentCommentId = null,
+                        Content = comment.Content,
+                        CreatedAt = DateTime.Now,
+                    };
+                    _context.Comments.Add(newComment);
+                    await _context.SaveChangesAsync();
+                    return Ok(new { message = "Comment saved successfully" });
+                }
+                catch (Exception ex)
+                {
+                    return StatusCode(500, $"An error occured:{ex.Message}");
+                }
+            }
+            else { return BadRequest(ModelState); }
+        }
+
+        [HttpPost("memberAddReply")]
+        public async Task<ActionResult> memberAddReply([FromBody] Comment reply) 
+        {
+            if (ModelState.IsValid)
+            {
+                try 
+                {
+                    Comment newReply = new Comment
+                    {
+                        BlogId = reply.BlogId,
+                        MemberId = reply.MemberId,
+                        EmployeeId = null,
+                        ParentCommentId = reply.ParentCommentId,
+                        Content = reply.Content,
+                        CreatedAt = DateTime.Now,
+                    };
+                    _context.Comments.Add(newReply);
+                    await _context.SaveChangesAsync();
+                    return Ok(new { message = "Reply saved successfully" });
+                } 
+                catch (Exception ex) { return StatusCode(500, $"An error occured:{ex.Message}"); }
+            }
+            else
+            {
+                return BadRequest(ModelState);
+            }
+        }
+        [HttpPost("employeeAddReply")]
+        public async Task<IActionResult> employeeAddReply([FromBody] Comment reply) 
+        {
+            if (ModelState.IsValid) 
+            {
+                try
+                {
+                    Comment newReply = new Comment
+                    {
+                        BlogId= reply.BlogId,
+                        MemberId = null,
+                        EmployeeId = reply.EmployeeId,
+                        ParentCommentId = reply.ParentCommentId,
+                        Content = reply.Content,
+                        CreatedAt = DateTime.Now,
+                    };
+                    _context.Comments.Add(newReply); 
+                    await _context.SaveChangesAsync();
+                    return Ok(new { message = "Reply saved successfully" });
+                }
+                catch(Exception ex) { return StatusCode(500, $"An error occured:{ex.Message}"); }
+            }
+            else
+            {
+                return BadRequest(ModelState);
+            }
+        }
 
         // DELETE: api/Comments/5
         [HttpDelete("{id}")]
