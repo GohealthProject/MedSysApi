@@ -69,6 +69,7 @@ namespace MedSysApi.Controllers
                 Author = blog.Employee.EmployeeName,
                 ArticleClass = blog.ArticleClass.BlogCategory1,
                 CreatedAt = blog.CreatedAt,
+                Views =blog.Views
             });
             return Ok(infoIonlyWant);
         }
@@ -89,6 +90,7 @@ namespace MedSysApi.Controllers
                 Author = blog.Employee.EmployeeName,
                 ArticleClass = blog.ArticleClass.BlogCategory1,
                 CreatedAt = blog.CreatedAt,
+                Views =blog.Views
             });
             return Ok(infoIonlyWant);
         }
