@@ -166,6 +166,29 @@ namespace MedSysApi.Controllers
             return NoContent();
         }
 
+        [HttpPut("ban/{id}")]
+        public IActionResult BanMember(int id)
+        {
+            var mem = _context.Members.Where(n => n.MemberId == id).FirstOrDefault();
+            if (mem.VieifiedId == "1")
+            {
+                mem.VieifiedId = "2";
+                _context.SaveChanges();
+            }
+            else if (mem.VieifiedId == "2")
+            {
+                mem.VieifiedId = "1";
+                _context.SaveChanges();
+            }
+            else
+            {
+                mem.VieifiedId = "2";
+                _context.SaveChanges();
+            }
+
+            return Ok();
+        }
+
         // POST: api/Members
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
