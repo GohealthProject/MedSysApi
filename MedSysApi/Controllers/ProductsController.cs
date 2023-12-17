@@ -241,5 +241,17 @@ namespace MedSysApi.Controllers
         {
             return (_context.Products?.Any(e => e.ProductId == id)).GetValueOrDefault();
         }
+
+        [HttpGet("Tracking/{mid}")]
+        public IActionResult Tracking(int mid)
+        {
+
+            List<int?> TrackListId  = _context.TrackingLists.Where(n => n.MemberId == mid).Select(n => n.ProductId).ToList();
+
+            List<Product> PList = _context.Products.Where(n => TrackListId.Contains(n.ProductId)).Take(5).ToList();
+
+            return Ok(PList);
+        }
+
     }
 }
