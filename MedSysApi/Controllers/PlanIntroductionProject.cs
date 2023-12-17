@@ -54,16 +54,6 @@ namespace MedSysApi.Controllers
         //======範本區=====
 
 
-        // PlanNameGetGET api/<PlanIntroductionProject>/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<Plan>> PlanNameGet(int id)
-        {
-            if (_context.Plans==null) { 
-            return NotFound();
-            }
-            var plan=await _context.Plans.FindAsync(id);
-            if (plan!=null) { return NotFound(); }
-            return plan;
-        }
+       
     }
 }
