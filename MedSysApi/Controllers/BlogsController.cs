@@ -113,6 +113,34 @@ namespace MedSysApi.Controllers
 
             return blog;
         }
+        [HttpGet("detail")]
+        public async Task<ActionResult<Blog>> GetBlogDetail(int id)
+        {
+            if (_context.Blogs == null)
+            {
+                return NotFound();
+            }
+            var blog = await _context.Blogs.Include(blog => blog.ArticleClass).Include(blog => blog.Employee).FirstOrDefaultAsync(blog => blog.BlogId == id);
+
+            if (blog == null)
+            {
+                return NotFound();
+            }
+            blog.Views++;
+            await _context.SaveChangesAsync();
+            var infoIonlyWant = new
+            {
+                BlogId = blog.BlogId,
+                Title = blog.Title,
+                Author = blog.Employee.EmployeeName,
+                ArticleClass = blog.ArticleClass.BlogCategory1,
+                CreatedAt = blog.CreatedAt,
+                Views =blog.Views,
+                Content = blog.Content,
+                BlogImage = blog.BlogImage
+            };
+            return Ok(infoIonlyWant);
+        }
 
         // PUT: api/Blogs/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
