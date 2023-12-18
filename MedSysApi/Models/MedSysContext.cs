@@ -8,10 +8,6 @@ namespace MedSysApi.Models;
 
 public partial class MedSysContext : DbContext
 {
-    public MedSysContext()
-    {
-    }
-
     public MedSysContext(DbContextOptions<MedSysContext> options)
         : base(options)
     {
@@ -76,10 +72,6 @@ public partial class MedSysContext : DbContext
     public virtual DbSet<SubProjectBridge> SubProjectBridges { get; set; }
 
     public virtual DbSet<TrackingList> TrackingLists { get; set; }
-
-//    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-//#warning To protect potentially sensitive information in your connection string,        => optionsBuilder.UseSqlServer("Data Source=anrouter9203.asuscomm.com,1433;Initial Catalog=MedSys;Persist Security Info=True;User ID=sa;Password=123a@;Encrypt=True");
-// you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
