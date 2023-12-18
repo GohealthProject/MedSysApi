@@ -27,6 +27,8 @@ public partial class MedSysContext : DbContext
 
     public virtual DbSet<Corporation> Corporations { get; set; }
 
+    public virtual DbSet<EcpayOrder> EcpayOrders { get; set; }
+
     public virtual DbSet<Employee> Employees { get; set; }
 
     public virtual DbSet<EmployeeClass> EmployeeClasses { get; set; }
@@ -36,6 +38,8 @@ public partial class MedSysContext : DbContext
     public virtual DbSet<Item> Items { get; set; }
 
     public virtual DbSet<Member> Members { get; set; }
+
+    public virtual DbSet<MembersStatus> MembersStatuses { get; set; }
 
     public virtual DbSet<Order> Orders { get; set; }
 
@@ -67,13 +71,15 @@ public partial class MedSysContext : DbContext
 
     public virtual DbSet<ReservedSub> ReservedSubs { get; set; }
 
+    public virtual DbSet<ReturnProduct> ReturnProducts { get; set; }
+
     public virtual DbSet<SubProjectBridge> SubProjectBridges { get; set; }
 
     public virtual DbSet<TrackingList> TrackingLists { get; set; }
 
 //    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-//#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
-//        => optionsBuilder.UseSqlServer("Data Source=anrouter9203.asuscomm.com,1433;Initial Catalog=MedSys;User ID=sa;Password=123a@;Encrypt=True");
+//#warning To protect potentially sensitive information in your connection string,        => optionsBuilder.UseSqlServer("Data Source=anrouter9203.asuscomm.com,1433;Initial Catalog=MedSys;Persist Security Info=True;User ID=sa;Password=123a@;Encrypt=True");
+// you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -180,6 +186,25 @@ public partial class MedSysContext : DbContext
                 .IsRequired()
                 .HasMaxLength(50)
                 .HasColumnName("password");
+        });
+
+        modelBuilder.Entity<EcpayOrder>(entity =>
+        {
+            entity.HasKey(e => e.MerchantTradeNo);
+
+            entity.Property(e => e.MerchantTradeNo).HasMaxLength(50);
+            entity.Property(e => e.Id)
+                .ValueGeneratedOnAdd()
+                .HasColumnName("ID");
+            entity.Property(e => e.MemberId)
+                .HasMaxLength(50)
+                .HasColumnName("MemberID");
+            entity.Property(e => e.PaymentDate).HasColumnType("datetime");
+            entity.Property(e => e.PaymentType).HasMaxLength(50);
+            entity.Property(e => e.PaymentTypeChargeFee).HasMaxLength(50);
+            entity.Property(e => e.RtnMsg).HasMaxLength(50);
+            entity.Property(e => e.TradeDate).HasMaxLength(50);
+            entity.Property(e => e.TradeNo).HasMaxLength(50);
         });
 
         modelBuilder.Entity<Employee>(entity =>
@@ -327,12 +352,30 @@ public partial class MedSysContext : DbContext
                 .HasMaxLength(10)
                 .IsFixedLength()
                 .HasColumnName("memberPhone");
+            entity.Property(e => e.StatusId).HasColumnName("statusID");
             entity.Property(e => e.TaxId).HasColumnName("taxID");
             entity.Property(e => e.VieifiedId).HasColumnName("VieifiedID");
+
+            entity.HasOne(d => d.Status).WithMany(p => p.Members)
+                .HasForeignKey(d => d.StatusId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_Members_MembersStatus");
 
             entity.HasOne(d => d.Tax).WithMany(p => p.Members)
                 .HasForeignKey(d => d.TaxId)
                 .HasConstraintName("FK_Member_Corporation");
+        });
+
+        modelBuilder.Entity<MembersStatus>(entity =>
+        {
+            entity.HasKey(e => e.StatusId);
+
+            entity.ToTable("MembersStatus");
+
+            entity.Property(e => e.StatusId).HasColumnName("statusID");
+            entity.Property(e => e.StatusName)
+                .HasMaxLength(50)
+                .HasColumnName("statusName");
         });
 
         modelBuilder.Entity<Order>(entity =>
@@ -346,6 +389,7 @@ public partial class MedSysContext : DbContext
                 .HasColumnType("date")
                 .HasColumnName("deliveryDate");
             entity.Property(e => e.MemberId).HasColumnName("memberId");
+            entity.Property(e => e.MerchantTradeNo).IsUnicode(false);
             entity.Property(e => e.OrderDate)
                 .HasColumnType("date")
                 .HasColumnName("orderDate");
@@ -421,6 +465,7 @@ public partial class MedSysContext : DbContext
             entity.ToTable("OrderState");
 
             entity.Property(e => e.StateId).HasColumnName("stateID");
+            entity.Property(e => e.OrderStatus).HasColumnName("orderStatus");
             entity.Property(e => e.StateDetailed)
                 .HasMaxLength(50)
                 .HasColumnName("stateDetailed");
@@ -592,6 +637,22 @@ public partial class MedSysContext : DbContext
                 .HasForeignKey(d => d.ReservedId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_ReservedSub_Reserve");
+        });
+
+        modelBuilder.Entity<ReturnProduct>(entity =>
+        {
+            entity
+                .HasNoKey()
+                .ToTable("ReturnProduct");
+
+            entity.Property(e => e.OrderId).HasColumnName("OrderID");
+            entity.Property(e => e.ProcessedDate).HasColumnType("date");
+            entity.Property(e => e.RefundAmount).HasColumnType("money");
+            entity.Property(e => e.ReturnDate).HasColumnType("date");
+            entity.Property(e => e.ReturnId)
+                .ValueGeneratedOnAdd()
+                .HasColumnName("ReturnID");
+            entity.Property(e => e.ReturnState).HasMaxLength(50);
         });
 
         modelBuilder.Entity<SubProjectBridge>(entity =>

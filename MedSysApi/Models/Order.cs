@@ -23,6 +23,8 @@ public partial class Order
 
     public DateTime? DeliveryDate { get; set; }
 
+    public string MerchantTradeNo { get; set; }
+
     public virtual Member Member { get; set; }
 
     public virtual ICollection<OrderDetail> OrderDetails { get; set; } = new List<OrderDetail>();
