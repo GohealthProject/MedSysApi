@@ -30,7 +30,7 @@ private readonly MedSysContext _context;
         [HttpGet("{id}")]
         public string Get(int? planid)
         {
-
+            //加mermber id
 
             var pl = _context.Plans.Where(p => p.PlanId == planid)
                .SelectMany(p => p.PlanRefs, (plan, project) => new { plan, project }).Where(p => p.project.PlanId == planid)
