@@ -170,19 +170,19 @@ namespace MedSysApi.Controllers
         public IActionResult BanMember(int id)
         {
             var mem = _context.Members.Where(n => n.MemberId == id).FirstOrDefault();
-            if (mem.VieifiedId == "1")
+            if (mem.StatusId == 1)
             {
-                mem.VieifiedId = "2";
+                mem.StatusId = 2;
                 _context.SaveChanges();
             }
-            else if (mem.VieifiedId == "2")
+            else if (mem.StatusId == 2)
             {
-                mem.VieifiedId = "1";
+                mem.StatusId = 1;
                 _context.SaveChanges();
             }
             else
             {
-                mem.VieifiedId = "2";
+                mem.StatusId = 2;
                 _context.SaveChanges();
             }
 
