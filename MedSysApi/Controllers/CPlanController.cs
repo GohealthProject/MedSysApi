@@ -46,7 +46,7 @@ private readonly MedSysContext _context;
                    ProjectPrice = (double)t.Project.ProjectPrice,
                    itemId = t.it.ItemId,
                    ItemName = (string)t.it.ItemName,
-
+                   ItemPrice=(int) t.it.ItemPrice,
                });
             //------datatable 轉json區--------
             DataTable dt = new DataTable();
@@ -58,6 +58,7 @@ private readonly MedSysContext _context;
             dt.Columns.Add(new DataColumn("ProjectPrice"));
             dt.Columns.Add(new DataColumn("itemId"));
             dt.Columns.Add(new DataColumn("ItemName"));
+            dt.Columns.Add(new DataColumn("ItemPrice"));
             foreach (var t in pl)
             {
                 DataRow dr = dt.NewRow();
@@ -70,6 +71,7 @@ private readonly MedSysContext _context;
                 dr["ProjectPrice"] = t.ProjectPrice;
                 dr["itemId"] = t.itemId;
                 dr["ItemName"] = t.ItemName;
+                dr["ItemPrice"] = t.ItemPrice;
                 dt.Rows.Add(dr);
             }
             DataTableToJsonConverter converter = new DataTableToJsonConverter();
@@ -82,7 +84,7 @@ private readonly MedSysContext _context;
                 string json = System.Text.Json.JsonSerializer.Serialize(pl);
                
 
-                return json;
+                return js;
             
         }
         public class DataTableToJsonConverter
