@@ -114,6 +114,26 @@ namespace MedSysApi.Controllers
             });
             return Ok(infoIonlyWant);
         }
+        [HttpGet("medical6")]
+        public async Task<ActionResult<IEnumerable<Blog>>>GetMedical6Blogs()
+        {
+            if (_context.Blogs == null)
+            {
+                return NotFound();
+            }
+            var blogs = await _context.Blogs.Include(blog => blog.ArticleClass).Include(blog => blog.Employee).Where(blog => blog.ArticleClassId == 2).OrderByDescending(blog => blog.Views).Take(6).ToListAsync();
+
+            var infoIonlyWant = blogs.Select(blog => new
+            {
+                BlogId = blog.BlogId,
+                Title = blog.Title,
+                Author = blog.Employee.EmployeeName,
+                ArticleClass = blog.ArticleClass.BlogCategory1,
+                CreatedAt = blog.CreatedAt,
+                Views =blog.Views
+            });
+            return Ok(infoIonlyWant);
+        }
 
         // GET: api/Blogs/5
         [HttpGet("{id}")]
