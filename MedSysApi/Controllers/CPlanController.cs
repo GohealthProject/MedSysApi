@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using System.Data;
+using static System.Net.Mime.MediaTypeNames;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -25,7 +26,28 @@ private readonly MedSysContext _context;
         {
             return new string[] { "value1", "value2" };
         }
-
+        [HttpPost("{plan}")]
+        public IActionResult price(int?plan) {
+            var projectprice =
+                    _context.Plans.Where(p => p.PlanId == plan)
+                    .SelectMany(p => p.PlanRefs, (j, c) => new { j.PlanName, c.Project })
+                    .GroupBy(p => p.PlanName).Select(p => new { PlanName = p.Key, PlanPrice = p.Sum(k => k.Project.ProjectPrice) });
+            DataTable dt = new DataTable();           
+            dt.Columns.Add(new DataColumn("planName"));
+            dt.Columns.Add(new DataColumn("PlanPrice"));
+         
+            foreach (var t in projectprice)
+            {
+                DataRow dr = dt.NewRow();               
+                dr["PlanName"] = t.PlanName;
+                dr["PlanPrice"] = t.PlanPrice;              
+                dt.Rows.Add(dr);
+            }
+            DataTableToJsonConverter converter = new DataTableToJsonConverter();
+            string js = converter.ConverterDataTableToJson(dt);
+            string json = System.Text.Json.JsonSerializer.Serialize(projectprice);
+            return Ok(js);
+        }
         // GET api/<CPlanController>/5
         [HttpGet("{id}")]
         public string Get(int? planid)
