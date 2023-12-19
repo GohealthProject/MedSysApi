@@ -24,10 +24,10 @@ namespace MedSysApi.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Project>>> GetProjects()
         {
-          if (_context.Projects == null)
-          {
-              return NotFound();
-          }
+            if (_context.Projects == null)
+            {
+                return NotFound();
+            }
             return await _context.Projects.ToListAsync();
         }
 
@@ -35,10 +35,10 @@ namespace MedSysApi.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Project>> GetProject(int id)
         {
-          if (_context.Projects == null)
-          {
-              return NotFound();
-          }
+            if (_context.Projects == null)
+            {
+                return NotFound();
+            }
             var project = await _context.Projects.FindAsync(id);
 
             if (project == null)
@@ -83,33 +83,79 @@ namespace MedSysApi.Controllers
         // POST: api/Projects
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Project>> PostProject(Project project)
+        public IActionResult PostProject()
         {
-          if (_context.Projects == null)
-          {
-              return Problem("Entity set 'MedSysContext.Projects'  is null.");
-          }
-            _context.Projects.Add(project);
-            try
+            var q = Request.Form;
+            var Cprjtxt = q["Cprjtxt"]; //陣列
+            var prjtxt = q["prjtxt"]; //陣列
+
+            if (Cprjtxt.Any())
             {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateException)
-            {
-                if (ProjectExists(project.ProjectId))
+                foreach (var item in Cprjtxt)
                 {
-                    return Conflict();
+                    if (item != null)
+                    {
+                        var pjname = new Project();
+                        pjname.ProjectName = item;
+                        pjname.ProjectPrice = 0;
+
+                        pjname.ProjectId = _context.Projects.Max(p => p.ProjectId) + 1;
+
+                        _context.Projects.Add(pjname);
+                        _context.SaveChanges();
+                    }
                 }
-                else
+            }
+            else if (prjtxt.Any())
+            {
+                foreach (var item in prjtxt)
                 {
-                    throw;
+                    if (item != null)
+                    {
+                        var pjname = new Project
+                        {
+                            ProjectName = item,
+                            ProjectPrice = 0,
+                            ProjectId = _context.Projects.Max(p => p.ProjectId) + 1
+                    };
+
+                        _context.Projects.Add(pjname);
+                        _context.SaveChanges();
+                    }
                 }
             }
 
-            return CreatedAtAction("GetProject", new { id = project.ProjectId }, project);
+            
+            //string pjname = q["prjchk"];
+
+
+
+            return Ok();
+
+            //if (_context.Projects == null)
+            //{
+            //    return Problem("Entity set 'MedSysContext.Projects'  is null.");
+            //}
+            //  _context.Projects.Add(project);
+            //  try
+            //  {
+            //      await _context.SaveChangesAsync();
+            //  }
+            //  catch (DbUpdateException)
+            //  {
+            //      if (ProjectExists(project.ProjectId))
+            //      {
+            //          return Conflict();
+            //      }
+            //      else
+            //      {
+            //          throw;
+            //      }
+            //  }
+
+            //  return CreatedAtAction("GetProject", new { id = project.ProjectId }, project);
         }
 
-        
         // DELETE: api/Projects/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteProject(int id)
