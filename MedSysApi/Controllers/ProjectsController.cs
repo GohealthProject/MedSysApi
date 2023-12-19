@@ -109,18 +109,7 @@ namespace MedSysApi.Controllers
             return CreatedAtAction("GetProject", new { id = project.ProjectId }, project);
         }
 
-        [HttpPost]
-        public IActionResult addProject()
-        {
-            var q = Request.Form;
-
-            string pjname = q["Cprjchk"];
-
-
-
-            return Ok();
-        }
-
+        
         // DELETE: api/Projects/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteProject(int id)
