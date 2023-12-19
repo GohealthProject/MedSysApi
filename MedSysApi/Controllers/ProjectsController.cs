@@ -24,10 +24,10 @@ namespace MedSysApi.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Project>>> GetProjects()
         {
-          if (_context.Projects == null)
-          {
-              return NotFound();
-          }
+            if (_context.Projects == null)
+            {
+                return NotFound();
+            }
             return await _context.Projects.ToListAsync();
         }
 
@@ -35,10 +35,10 @@ namespace MedSysApi.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Project>> GetProject(int id)
         {
-          if (_context.Projects == null)
-          {
-              return NotFound();
-          }
+            if (_context.Projects == null)
+            {
+                return NotFound();
+            }
             var project = await _context.Projects.FindAsync(id);
 
             if (project == null)
@@ -83,42 +83,77 @@ namespace MedSysApi.Controllers
         // POST: api/Projects
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Project>> PostProject(Project project)
-        {
-          if (_context.Projects == null)
-          {
-              return Problem("Entity set 'MedSysContext.Projects'  is null.");
-          }
-            _context.Projects.Add(project);
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateException)
-            {
-                if (ProjectExists(project.ProjectId))
-                {
-                    return Conflict();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return CreatedAtAction("GetProject", new { id = project.ProjectId }, project);
-        }
-
-        [HttpPost]
-        public IActionResult addProject()
+        public IActionResult PostProject()
         {
             var q = Request.Form;
+            var Cprjtxt = q["Cprjtxt"]; //陣列
+            var prjtxt = q["prjtxt"]; //陣列
 
-            string pjname = q["Cprjchk"];
+            if (Cprjtxt.Any())
+            {
+                foreach (var item in Cprjtxt)
+                {
+                    if (item != null)
+                    {
+                        var pjname = new Project();
+                        pjname.ProjectName = item;
+                        pjname.ProjectPrice = 0;
+
+                        pjname.ProjectId = _context.Projects.Max(p => p.ProjectId) + 1;
+
+                        _context.Projects.Add(pjname);
+                        _context.SaveChanges();
+                    }
+                }
+            }
+            else if (prjtxt.Any())
+            {
+                foreach (var item in prjtxt)
+                {
+                    if (item != null)
+                    {
+                        var pjname = new Project
+                        {
+                            ProjectName = item,
+                            ProjectPrice = 0,
+                            ProjectId = _context.Projects.Max(p => p.ProjectId) + 1
+                    };
+
+                        _context.Projects.Add(pjname);
+                        _context.SaveChanges();
+                    }
+                }
+            }
+
+            
+            //string pjname = q["prjchk"];
 
 
 
             return Ok();
+
+            //if (_context.Projects == null)
+            //{
+            //    return Problem("Entity set 'MedSysContext.Projects'  is null.");
+            //}
+            //  _context.Projects.Add(project);
+            //  try
+            //  {
+            //      await _context.SaveChangesAsync();
+            //  }
+            //  catch (DbUpdateException)
+            //  {
+            //      if (ProjectExists(project.ProjectId))
+            //      {
+            //          return Conflict();
+            //      }
+            //      else
+            //      {
+            //          throw;
+            //      }
+            //  }
+
+            //  return CreatedAtAction("GetProject", new { id = project.ProjectId }, project);
         }
 
         // DELETE: api/Projects/5
