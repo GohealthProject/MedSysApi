@@ -25,11 +25,15 @@ public partial class Order
 
     public string MerchantTradeNo { get; set; }
 
+    public string TradeNo { get; set; }
+
     public virtual Member Member { get; set; }
 
     public virtual ICollection<OrderDetail> OrderDetails { get; set; } = new List<OrderDetail>();
 
     public virtual OrderPay Pay { get; set; }
+
+    public virtual ICollection<ReturnProduct> ReturnProducts { get; set; } = new List<ReturnProduct>();
 
     public virtual OrderShip Ship { get; set; }
 
