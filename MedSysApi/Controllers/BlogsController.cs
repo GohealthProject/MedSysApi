@@ -307,6 +307,13 @@ namespace MedSysApi.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteBlog(int id)
         {
+            //找出此部落格的留言
+            var comments = await _context.Comments.Where(comment => comment.BlogId == id).ToListAsync();
+            //刪除留言
+            foreach (var comment in comments)
+            {
+                _context.Comments.Remove(comment);
+            }
             if (_context.Blogs == null)
             {
                 return NotFound();
