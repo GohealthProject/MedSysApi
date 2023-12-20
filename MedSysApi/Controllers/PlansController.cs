@@ -143,6 +143,7 @@ namespace MedSysApi.Controllers
                 };
                 _context.Plans.Add(plan);
 
+                //-----------------------------------------------------
                 //再加方案專案關聯
                 foreach (var item in Cprjtxt)
                 {
@@ -170,6 +171,7 @@ namespace MedSysApi.Controllers
 
                     _context.PlanRefs.Add(a);
                 }
+                //-----------------------------------------------------
 
                 _context.SaveChanges();
 
