@@ -50,12 +50,12 @@ private readonly MedSysContext _context;
         }
         // GET api/<CPlanController>/5
         [HttpGet("{id}")]
-        public string Get(int? planid)
+        public string Get(int? id)
         {
             //加mermber id
 
-            var pl = _context.Plans.Where(p => p.PlanId == planid)
-               .SelectMany(p => p.PlanRefs, (plan, project) => new { plan, project }).Where(p => p.project.PlanId == planid)
+            var pl = _context.Plans.Where(p => p.PlanId == id)
+               .SelectMany(p => p.PlanRefs, (plan, project) => new { plan, project }).Where(p => p.project.PlanId == id)
                .SelectMany(p => p.project.Project.Items, (prbg, it) => new { prbg.project.Project, it }).Where(p => p.Project.ProjectId == p.it.ProjectId)
 
                //.SelectMany(p => p.project.Project.Items, (projectid, item) => new { projectid, item }).Where(p => p.item.ProjectId == p.projectid.project.ProjectId)
