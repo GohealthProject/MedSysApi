@@ -105,6 +105,11 @@ namespace MedSysApi.Controllers
             return CreatedAtAction("GetComment", new { id = comment.CommentId }, comment);
         }
 
+        /// <summary>
+        /// 會員新增留言
+        /// </summary>
+        /// <param name="comment"></param>
+        /// <returns></returns>
         [HttpPost("memberAddComment")]
         public async Task<ActionResult> memberAddComment([FromBody] Comment comment) 
         {
@@ -139,6 +144,11 @@ namespace MedSysApi.Controllers
             }
         }
 
+        /// <summary>
+        /// 不雅字眼資料庫
+        /// </summary>
+        /// <param name="Content"></param>
+        /// <returns></returns>
         private bool CheckForInappropriateWords(string Content) 
         {
             List<string> systemDefinitionBadWords = new List<String> { "麥當勞", "燒烤", "肯德基" };
@@ -152,6 +162,11 @@ namespace MedSysApi.Controllers
             return false;
         }
 
+        /// <summary>
+        /// 標記不雅字眼
+        /// </summary>
+        /// <param name="Content"></param>
+        /// <returns></returns>
         private string MarkAsInappropriate(string Content)
         {
             string tag = "[INAPPROPRIATE]";
@@ -202,7 +217,7 @@ namespace MedSysApi.Controllers
                         MemberId = reply.MemberId,
                         EmployeeId = null,
                         ParentCommentId = reply.ParentCommentId,
-                        Content = reply.Content,
+                        Content = CheckForInappropriateWords(reply.Content)?MarkAsInappropriate(reply.Content):reply.Content,
                         CreatedAt = DateTime.Now,
                     };
                     _context.Comments.Add(newReply);
