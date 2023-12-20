@@ -206,6 +206,14 @@ namespace MedSysApi.Controllers
                 return NotFound();
             }
 
+            //先刪除PlanRefs中的資料
+            var q = _context.PlanRefs.Where(p => p.ProjectId == id);
+            foreach (var item in q)
+            {
+                _context.PlanRefs.Remove(item);
+            }
+
+            //再刪除Projects中的資料
             _context.Projects.Remove(project);
             await _context.SaveChangesAsync();
 
