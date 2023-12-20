@@ -112,13 +112,15 @@ namespace MedSysApi.Controllers
             {
                 try
                 {
+
                     Comment newComment = new Comment
                     {
                         BlogId = comment.BlogId,
                         MemberId = comment.MemberId,
                         EmployeeId = null,
                         ParentCommentId = null,
-                        Content = comment.Content,
+                        //Content = comment.Content,
+                        Content = CheckForInappropriateWords(comment.Content) ? MarkAsInappropriate(comment.Content) : comment.Content,
                         CreatedAt = DateTime.Now,
                     };
 
@@ -136,6 +138,29 @@ namespace MedSysApi.Controllers
                 return BadRequest(ModelState);
             }
         }
+
+        private bool CheckForInappropriateWords(string Content) 
+        {
+            List<string> systemDefinitionBadWords = new List<String> { "麥當勞", "燒烤", "肯德基" };
+            foreach (string badword in systemDefinitionBadWords) 
+            {
+                if (Content.Contains(badword, StringComparison.OrdinalIgnoreCase)) 
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        private string MarkAsInappropriate(string Content)
+        {
+            string tag = "[INAPPROPRIATE]";
+
+            return $"{tag}{Content}";
+        }
+
+
+
         [HttpPost("employeeAddComment")]
         public async Task<IActionResult> employeeAddComment([FromBody] Comment comment) 
         {
