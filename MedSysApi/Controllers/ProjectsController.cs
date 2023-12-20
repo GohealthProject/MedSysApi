@@ -51,6 +51,23 @@ namespace MedSysApi.Controllers
 
         // PUT: api/Projects/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        [HttpPut("prj/{id}")]
+        public IActionResult PProject(int id)
+        {
+            var q = Request.Form;
+            var ProjectName = q["ProjectName"];
+            var ProjectPrice = q["ProjectPrice"];
+
+            var project = _context.Projects.Find(id);
+            project.ProjectName = ProjectName;
+            project.ProjectPrice = Convert.ToInt32(ProjectPrice);
+
+            _context.SaveChanges();
+            return Ok(project);
+        }
+
+        // PUT: api/Projects/5
+        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
         public async Task<IActionResult> PutProject(int id, Project project)
         {
@@ -154,6 +171,25 @@ namespace MedSysApi.Controllers
             //  }
 
             //  return CreatedAtAction("GetProject", new { id = project.ProjectId }, project);
+        }
+
+        [HttpPost("prj")]
+        public IActionResult PostPrj()
+        {
+            var q = Request.Form;
+            var CProjectName = q["CProjectName"];
+            var CProjectPrice = q["CProjectPrice"];
+
+            var project  = new Project
+            {
+                ProjectName = CProjectName,
+                ProjectPrice = Convert.ToInt32(CProjectPrice),
+                ProjectId = _context.Projects.Max(p => p.ProjectId) + 1
+            };
+            _context.Projects.Add(project);
+            _context.SaveChanges();
+
+            return Ok();
         }
 
         // DELETE: api/Projects/5
