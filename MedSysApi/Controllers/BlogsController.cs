@@ -47,7 +47,9 @@ namespace MedSysApi.Controllers
                 Author = blog.Employee.EmployeeName,
                 ArticleClass = blog.ArticleClass.BlogCategory1,
                 CreatedAt = blog.CreatedAt,
-                Views =blog.Views
+                Views =blog.Views,
+                BlogImage = blog.BlogImage,
+                Content = blog.Content
             });
             return Ok(infoIonlyWant);
         }   
@@ -69,7 +71,9 @@ namespace MedSysApi.Controllers
                 Author = blog.Employee.EmployeeName,
                 ArticleClass = blog.ArticleClass.BlogCategory1,
                 CreatedAt = blog.CreatedAt,
-                Views =blog.Views
+                Views =blog.Views,
+                BlogImage = blog.BlogImage,
+                Content = blog.Content
             });
             return Ok(infoIonlyWant);
         }
@@ -122,6 +126,26 @@ namespace MedSysApi.Controllers
                 return NotFound();
             }
             var blogs = await _context.Blogs.Include(blog => blog.ArticleClass).Include(blog => blog.Employee).Where(blog => blog.ArticleClassId == 2).OrderByDescending(blog => blog.Views).Take(6).ToListAsync();
+
+            var infoIonlyWant = blogs.Select(blog => new
+            {
+                BlogId = blog.BlogId,
+                Title = blog.Title,
+                Author = blog.Employee.EmployeeName,
+                ArticleClass = blog.ArticleClass.BlogCategory1,
+                CreatedAt = blog.CreatedAt,
+                Views =blog.Views
+            });
+            return Ok(infoIonlyWant);
+        }
+        [HttpGet("celebrity6")]
+        public async Task<ActionResult<IEnumerable<Blog>>>GetCelebrity6Blogs()
+        {
+            if (_context.Blogs == null)
+            {
+                return NotFound();
+            }
+            var blogs = await _context.Blogs.Include(blog => blog.ArticleClass).Include(blog => blog.Employee).Where(blog => blog.ArticleClassId == 3).OrderByDescending(blog => blog.Views).Take(6).ToListAsync();
 
             var infoIonlyWant = blogs.Select(blog => new
             {
