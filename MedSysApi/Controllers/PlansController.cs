@@ -125,8 +125,6 @@ namespace MedSysApi.Controllers
                //dbContextTransaction = _context.Database.BeginTransaction();
                
 
-                
-
                 var q = Request.Form;
                 //var pjid = q["Cprjchk"];
 
@@ -144,33 +142,33 @@ namespace MedSysApi.Controllers
                 _context.Plans.Add(plan);
 
                 //-----------------------------------------------------
-                //再加方案專案關聯
-                foreach (var item in Cprjtxt)
-                {
-                    if (item != null)
-                    {
-                        var pjname = new Project();
-                        pjname.ProjectName = item;
-                        pjname.ProjectPrice = 0;
+                ////再加方案專案關聯
+                //foreach (var item in Cprjtxt)
+                //{
+                //    if (item != null)
+                //    {
+                //        var pjname = new Project();
+                //        pjname.ProjectName = item;
+                //        pjname.ProjectPrice = 0;
 
-                        pjname.ProjectId = _context.Projects.Max(p => p.ProjectId) + 1;
+                //        pjname.ProjectId = _context.Projects.Max(p => p.ProjectId) + 1;
 
-                        _context.Projects.Add(pjname);
-                    }
-                }
+                //        _context.Projects.Add(pjname);
+                //    }
+                //}
 
-                //最後搭橋梁
-                //int pid 為 Plan資料表中最後一個欄位的ID
-                var pid = _context.Plans.Max(p => p.PlanId);
+                ////最後搭橋梁
+                ////int pid 為 Plan資料表中最後一個欄位的ID
+                //var pid = _context.Plans.Max(p => p.PlanId);
 
-                foreach (var item in pjid)
-                {
-                    var a = new PlanRef();
-                    a.PlanId = pid;
-                    a.ProjectId = Int32.Parse(item);
+                //foreach (var item in pjid)
+                //{
+                //    var a = new PlanRef();
+                //    a.PlanId = pid;
+                //    a.ProjectId = Int32.Parse(item);
 
-                    _context.PlanRefs.Add(a);
-                }
+                //    _context.PlanRefs.Add(a);
+                //}
                 //-----------------------------------------------------
 
                 _context.SaveChanges();
