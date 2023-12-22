@@ -62,7 +62,14 @@ namespace MedSysApi.Controllers
 
             return member;
         }
-
+        [HttpPut("memberSetNickname")]
+        public IActionResult SetNickname([FromBody] Member WhoSetNickname)
+        {
+            var member = _context.Members.FirstOrDefault(mem => mem.MemberId == WhoSetNickname.MemberId);
+            member.MemberNickname = WhoSetNickname.MemberNickname;
+            _context.SaveChanges();
+            return Ok(new { message="success"});
+        }
         // PUT: api/Members/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("Up/{id}")]
