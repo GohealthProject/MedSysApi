@@ -128,8 +128,11 @@ namespace MedSysApi.Controllers
                 var q = Request.Form;
                 //var pjid = q["Cprjchk"];
 
+                var files = Request.Form.Files;
+
                 string plname = q["CPlanName"];
                 string pldesc = q["CPlanDescription"];
+                string pling = files[0].FileName;
                 var Cprjtxt = q["Cprjtxt"]; //陣列
                 var pjid = q["Cprjchk"];
 
@@ -138,6 +141,7 @@ namespace MedSysApi.Controllers
                 {
                     PlanName = plname,
                     PlanDescription = pldesc,
+                    PlanImg = pling
                 };
                 _context.Plans.Add(plan);
 
