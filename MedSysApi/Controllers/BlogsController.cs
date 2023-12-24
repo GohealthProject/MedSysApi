@@ -47,7 +47,9 @@ namespace MedSysApi.Controllers
                 Author = blog.Employee.EmployeeName,
                 ArticleClass = blog.ArticleClass.BlogCategory1,
                 CreatedAt = blog.CreatedAt,
-                Views =blog.Views
+                Views =blog.Views,
+                BlogImage = blog.BlogImage,
+                Content = blog.Content
             });
             return Ok(infoIonlyWant);
         }   
@@ -69,6 +71,9 @@ namespace MedSysApi.Controllers
                 Author = blog.Employee.EmployeeName,
                 ArticleClass = blog.ArticleClass.BlogCategory1,
                 CreatedAt = blog.CreatedAt,
+                Views =blog.Views,
+                BlogImage = blog.BlogImage,
+                Content = blog.Content
             });
             return Ok(infoIonlyWant);
         }
@@ -89,10 +94,70 @@ namespace MedSysApi.Controllers
                 Author = blog.Employee.EmployeeName,
                 ArticleClass = blog.ArticleClass.BlogCategory1,
                 CreatedAt = blog.CreatedAt,
+                Views =blog.Views
             });
             return Ok(infoIonlyWant);
         }
+        [HttpGet("activity6")]
+        public async Task<ActionResult<IEnumerable<Blog>>>GetActivity6Blogs()
+        {
+            if (_context.Blogs == null)
+            {
+                return NotFound();
+            }
+            var blogs = await _context.Blogs.Include(blog => blog.ArticleClass).Include(blog => blog.Employee).Where(blog => blog.ArticleClassId == 1).OrderByDescending(blog => blog.Views).Take(6).ToListAsync();
 
+            var infoIonlyWant = blogs.Select(blog => new
+            {
+                BlogId = blog.BlogId,
+                Title = blog.Title,
+                Author = blog.Employee.EmployeeName,
+                ArticleClass = blog.ArticleClass.BlogCategory1,
+                CreatedAt = blog.CreatedAt,
+                Views =blog.Views
+            });
+            return Ok(infoIonlyWant);
+        }
+        [HttpGet("medical6")]
+        public async Task<ActionResult<IEnumerable<Blog>>>GetMedical6Blogs()
+        {
+            if (_context.Blogs == null)
+            {
+                return NotFound();
+            }
+            var blogs = await _context.Blogs.Include(blog => blog.ArticleClass).Include(blog => blog.Employee).Where(blog => blog.ArticleClassId == 2).OrderByDescending(blog => blog.Views).Take(6).ToListAsync();
+
+            var infoIonlyWant = blogs.Select(blog => new
+            {
+                BlogId = blog.BlogId,
+                Title = blog.Title,
+                Author = blog.Employee.EmployeeName,
+                ArticleClass = blog.ArticleClass.BlogCategory1,
+                CreatedAt = blog.CreatedAt,
+                Views =blog.Views
+            });
+            return Ok(infoIonlyWant);
+        }
+        [HttpGet("celebrity6")]
+        public async Task<ActionResult<IEnumerable<Blog>>>GetCelebrity6Blogs()
+        {
+            if (_context.Blogs == null)
+            {
+                return NotFound();
+            }
+            var blogs = await _context.Blogs.Include(blog => blog.ArticleClass).Include(blog => blog.Employee).Where(blog => blog.ArticleClassId == 3).OrderByDescending(blog => blog.Views).Take(6).ToListAsync();
+
+            var infoIonlyWant = blogs.Select(blog => new
+            {
+                BlogId = blog.BlogId,
+                Title = blog.Title,
+                Author = blog.Employee.EmployeeName,
+                ArticleClass = blog.ArticleClass.BlogCategory1,
+                CreatedAt = blog.CreatedAt,
+                Views =blog.Views
+            });
+            return Ok(infoIonlyWant);
+        }
 
         // GET: api/Blogs/5
         [HttpGet("{id}")]
@@ -110,6 +175,34 @@ namespace MedSysApi.Controllers
             }
 
             return blog;
+        }
+        [HttpGet("detail")]
+        public async Task<ActionResult<Blog>> GetBlogDetail(int id)
+        {
+            if (_context.Blogs == null)
+            {
+                return NotFound();
+            }
+            var blog = await _context.Blogs.Include(blog => blog.ArticleClass).Include(blog => blog.Employee).FirstOrDefaultAsync(blog => blog.BlogId == id);
+
+            if (blog == null)
+            {
+                return NotFound();
+            }
+            blog.Views++;
+            await _context.SaveChangesAsync();
+            var infoIonlyWant = new
+            {
+                BlogId = blog.BlogId,
+                Title = blog.Title,
+                Author = blog.Employee.EmployeeName,
+                ArticleClass = blog.ArticleClass.BlogCategory1,
+                CreatedAt = blog.CreatedAt,
+                Views =blog.Views,
+                Content = blog.Content,
+                BlogImage = blog.BlogImage
+            };
+            return Ok(infoIonlyWant);
         }
 
         // PUT: api/Blogs/5
@@ -214,6 +307,13 @@ namespace MedSysApi.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteBlog(int id)
         {
+            //找出此部落格的留言
+            var comments = await _context.Comments.Where(comment => comment.BlogId == id).ToListAsync();
+            //刪除留言
+            foreach (var comment in comments)
+            {
+                _context.Comments.Remove(comment);
+            }
             if (_context.Blogs == null)
             {
                 return NotFound();

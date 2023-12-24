@@ -4,7 +4,7 @@
    "ContextNamespace": null,
    "DefaultDacpacSchema": null,
    "FilterSchemas": false,
-   "IncludeConnectionString": true,
+   "IncludeConnectionString": false,
    "ModelNamespace": null,
    "OutputContextPath": null,
    "OutputPath": "Models",
@@ -36,6 +36,10 @@
          "ObjectType": 0
       },
       {
+         "Name": "[dbo].[EcpayOrders]",
+         "ObjectType": 0
+      },
+      {
          "Name": "[dbo].[EmployeeClass]",
          "ObjectType": 0
       },
@@ -53,6 +57,14 @@
       },
       {
          "Name": "[dbo].[Members]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[MembersStatus]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[Message]",
          "ObjectType": 0
       },
       {
@@ -116,11 +128,27 @@
          "ObjectType": 0
       },
       {
+         "Name": "[dbo].[ReturnProduct]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[Room]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[RoomRef]",
+         "ObjectType": 0
+      },
+      {
          "Name": "[dbo].[subProjectBridges]",
          "ObjectType": 0
       },
       {
          "Name": "[dbo].[TrackingList]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[TWAddress]",
          "ObjectType": 0
       }
    ],

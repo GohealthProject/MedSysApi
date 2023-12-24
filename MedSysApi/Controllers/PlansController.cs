@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using MedSysApi.Models;
+using Microsoft.EntityFrameworkCore.Storage;
 
 namespace MedSysApi.Controllers
 {
@@ -115,22 +116,78 @@ namespace MedSysApi.Controllers
         [HttpPost]
         public IActionResult PostPlan()
         {
-            var q = Request.Form;
-            //var pjid = q["Cprjchk"];
+            //IDbContextTransaction dbContextTransaction = null;
 
-            string pjname = q["CPlanName"];
-            string pjdesc = q["CPlanDescription"];
-
-            var plan = new Plan()
+            try
             {
-                PlanName = pjname,
-                PlanDescription = pjdesc,
-            };
+                
 
-            _context.Plans.Add(plan);
-            _context.SaveChanges();
+               //dbContextTransaction = _context.Database.BeginTransaction();
+               
 
-            return Ok();
+                var q = Request.Form;
+                //var pjid = q["Cprjchk"];
+
+                var files = Request.Form.Files;
+
+                string plname = q["CPlanName"];
+                string pldesc = q["CPlanDescription"];
+                string pling = files[0].FileName;
+                var Cprjtxt = q["Cprjtxt"]; //陣列
+                var pjid = q["Cprjchk"];
+
+                //先加方案
+                var plan = new Plan()
+                {
+                    PlanName = plname,
+                    PlanDescription = pldesc,
+                    PlanImg = pling
+                };
+                _context.Plans.Add(plan);
+
+                //-----------------------------------------------------
+                ////再加方案專案關聯
+                //foreach (var item in Cprjtxt)
+                //{
+                //    if (item != null)
+                //    {
+                //        var pjname = new Project();
+                //        pjname.ProjectName = item;
+                //        pjname.ProjectPrice = 0;
+
+                //        pjname.ProjectId = _context.Projects.Max(p => p.ProjectId) + 1;
+
+                //        _context.Projects.Add(pjname);
+                //    }
+                //}
+
+                ////最後搭橋梁
+                ////int pid 為 Plan資料表中最後一個欄位的ID
+                //var pid = _context.Plans.Max(p => p.PlanId);
+
+                //foreach (var item in pjid)
+                //{
+                //    var a = new PlanRef();
+                //    a.PlanId = pid;
+                //    a.ProjectId = Int32.Parse(item);
+
+                //    _context.PlanRefs.Add(a);
+                //}
+                //-----------------------------------------------------
+
+                _context.SaveChanges();
+
+                //dbContextTransaction.Commit();
+
+                return Ok();
+            }
+
+            catch (Exception ex)
+            {
+                //dbContextTransaction.Rollback();
+                return BadRequest(ex.Message);
+                
+            }
         }
 
         // DELETE: api/Plans/5

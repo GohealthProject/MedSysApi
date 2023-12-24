@@ -153,6 +153,15 @@ namespace MedSysApi.Controllers
                 return NotFound();
             }
             var planRef = await _context.PlanRefs.FindAsync(id);
+
+            var del = from p in _context.PlanRefs
+                where p.PlanId == id
+                select p;
+
+            _context.PlanRefs.RemoveRange(del);
+
+
+
             if (planRef == null)
             {
                 return NotFound();

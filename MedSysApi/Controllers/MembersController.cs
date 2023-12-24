@@ -62,7 +62,14 @@ namespace MedSysApi.Controllers
 
             return member;
         }
-
+        [HttpPut("memberSetNickname")]
+        public IActionResult SetNickname([FromBody] Member WhoSetNickname)
+        {
+            var member = _context.Members.FirstOrDefault(mem => mem.MemberId == WhoSetNickname.MemberId);
+            member.MemberNickname = WhoSetNickname.MemberNickname;
+            _context.SaveChanges();
+            return Ok(new { message="success"});
+        }
         // PUT: api/Members/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("Up/{id}")]
@@ -164,6 +171,29 @@ namespace MedSysApi.Controllers
             }
 
             return NoContent();
+        }
+
+        [HttpPut("ban/{id}")]
+        public IActionResult BanMember(int id)
+        {
+            var mem = _context.Members.Where(n => n.MemberId == id).FirstOrDefault();
+            if (mem.StatusId == 1)
+            {
+                mem.StatusId = 2;
+                _context.SaveChanges();
+            }
+            else if (mem.StatusId == 2)
+            {
+                mem.StatusId = 1;
+                _context.SaveChanges();
+            }
+            else
+            {
+                mem.StatusId = 2;
+                _context.SaveChanges();
+            }
+
+            return Ok();
         }
 
         // POST: api/Members

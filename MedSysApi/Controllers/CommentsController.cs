@@ -105,6 +105,11 @@ namespace MedSysApi.Controllers
             return CreatedAtAction("GetComment", new { id = comment.CommentId }, comment);
         }
 
+        /// <summary>
+        /// 會員新增留言
+        /// </summary>
+        /// <param name="comment"></param>
+        /// <returns></returns>
         [HttpPost("memberAddComment")]
         public async Task<ActionResult> memberAddComment([FromBody] Comment comment) 
         {
@@ -112,13 +117,15 @@ namespace MedSysApi.Controllers
             {
                 try
                 {
+
                     Comment newComment = new Comment
                     {
                         BlogId = comment.BlogId,
                         MemberId = comment.MemberId,
                         EmployeeId = null,
                         ParentCommentId = null,
-                        Content = comment.Content,
+                        //Content = comment.Content,
+                        Content = CheckForInappropriateWords(comment.Content) ? MarkAsInappropriate(comment.Content) : comment.Content,
                         CreatedAt = DateTime.Now,
                     };
 
@@ -136,6 +143,39 @@ namespace MedSysApi.Controllers
                 return BadRequest(ModelState);
             }
         }
+
+        /// <summary>
+        /// 不雅字眼資料庫
+        /// </summary>
+        /// <param name="Content"></param>
+        /// <returns></returns>
+        private bool CheckForInappropriateWords(string Content) 
+        {
+            List<string> systemDefinitionBadWords = new List<String> { "麥當勞", "燒烤", "肯德基" };
+            foreach (string badword in systemDefinitionBadWords) 
+            {
+                if (Content.Contains(badword, StringComparison.OrdinalIgnoreCase)) 
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        /// <summary>
+        /// 標記不雅字眼
+        /// </summary>
+        /// <param name="Content"></param>
+        /// <returns></returns>
+        private string MarkAsInappropriate(string Content)
+        {
+            string tag = "[INAPPROPRIATE]";
+
+            return $"{tag}{Content}";
+        }
+
+
+
         [HttpPost("employeeAddComment")]
         public async Task<IActionResult> employeeAddComment([FromBody] Comment comment) 
         {
@@ -177,7 +217,7 @@ namespace MedSysApi.Controllers
                         MemberId = reply.MemberId,
                         EmployeeId = null,
                         ParentCommentId = reply.ParentCommentId,
-                        Content = reply.Content,
+                        Content = CheckForInappropriateWords(reply.Content)?MarkAsInappropriate(reply.Content):reply.Content,
                         CreatedAt = DateTime.Now,
                     };
                     _context.Comments.Add(newReply);
