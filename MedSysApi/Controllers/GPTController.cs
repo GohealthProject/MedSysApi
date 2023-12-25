@@ -13,7 +13,7 @@ namespace MedSysApi.Controllers
         [HttpPost]
         public async Task<IActionResult> GetAIBasedResult(string SearchText)
         {
-            string APIKey = "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";
+            string APIKey = "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";
             string answer = string.Empty;
 
             var openai = new OpenAIAPI(APIKey);
