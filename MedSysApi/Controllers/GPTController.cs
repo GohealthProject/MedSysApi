@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using OpenAI_API;
 using OpenAI_API.Completions;
 
@@ -13,7 +14,7 @@ namespace MedSysApi.Controllers
         [HttpPost]
         public async Task<IActionResult> GetAIBasedResult(string SearchText)
         {
-            string APIKey = "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";
+            string APIKey = "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";
             string answer = string.Empty;
 
             var openai = new OpenAIAPI(APIKey);
@@ -31,8 +32,16 @@ namespace MedSysApi.Controllers
                 answer = choice.Text;
             }
 
-            return Ok(answer);
+            var json = JsonConvert.SerializeObject(answer);
+
+            return Ok(json);
         }
 
+        [HttpPost("tttt")]
+        public async Task<string> testt(string SearchText)
+        {
+            string aaa = "abbcc";
+            return aaa;
+        }
     }
 }
