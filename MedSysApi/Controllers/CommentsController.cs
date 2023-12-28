@@ -26,10 +26,10 @@ namespace MedSysApi.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Comment>>> GetComments()
         {
-          if (_context.Comments == null)
-          {
-              return NotFound();
-          }
+            if (_context.Comments == null)
+            {
+                return NotFound();
+            }
             return await _context.Comments.ToListAsync();
         }
         [HttpGet("comment")]
@@ -37,18 +37,18 @@ namespace MedSysApi.Controllers
         {
             var q = _context.Comments.Where(n => n.CommentId == id).ToList();
 
-            var qq = _context.Comments.Where(n=>n.ParentCommentId==id).Include(n=>n.Member).Include(n=>n.Employee);
-            
+            var qq = _context.Comments.Where(n => n.ParentCommentId == id).Include(n => n.Member).Include(n => n.Employee);
+
             return Ok(qq);
         }
         // GET: api/Comments/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Comment>> GetComment(int id)
         {
-          if (_context.Comments == null)
-          {
-              return NotFound();
-          }
+            if (_context.Comments == null)
+            {
+                return NotFound();
+            }
             var comment = await _context.Comments.FindAsync(id);
 
             if (comment == null)
@@ -95,10 +95,10 @@ namespace MedSysApi.Controllers
         [HttpPost]
         public async Task<ActionResult<Comment>> PostComment(Comment comment)
         {
-          if (_context.Comments == null)
-          {
-              return Problem("Entity set 'MedSysContext.Comments'  is null.");
-          }
+            if (_context.Comments == null)
+            {
+                return Problem("Entity set 'MedSysContext.Comments'  is null.");
+            }
             _context.Comments.Add(comment);
             await _context.SaveChangesAsync();
 
@@ -111,7 +111,7 @@ namespace MedSysApi.Controllers
         /// <param name="comment"></param>
         /// <returns></returns>
         [HttpPost("memberAddComment")]
-        public async Task<ActionResult> memberAddComment([FromBody] Comment comment) 
+        public async Task<ActionResult> memberAddComment([FromBody] Comment comment)
         {
             if (ModelState.IsValid)
             {
@@ -138,7 +138,7 @@ namespace MedSysApi.Controllers
                     return StatusCode(500, $"An error occured:{ex.Message}");
                 }
             }
-            else 
+            else
             {
                 return BadRequest(ModelState);
             }
@@ -149,12 +149,12 @@ namespace MedSysApi.Controllers
         /// </summary>
         /// <param name="Content"></param>
         /// <returns></returns>
-        private bool CheckForInappropriateWords(string Content) 
+        private bool CheckForInappropriateWords(string Content)
         {
-            List<string> systemDefinitionBadWords = new List<String> { "麥當勞", "燒烤", "肯德基" };
-            foreach (string badword in systemDefinitionBadWords) 
+            List<string> systemDefinitionBadWords = new List<String> { "麥當勞", "燒烤", "肯德基", "乾" };
+            foreach (string badword in systemDefinitionBadWords)
             {
-                if (Content.Contains(badword, StringComparison.OrdinalIgnoreCase)) 
+                if (Content.Contains(badword, StringComparison.OrdinalIgnoreCase))
                 {
                     return true;
                 }
@@ -177,11 +177,11 @@ namespace MedSysApi.Controllers
 
 
         [HttpPost("employeeAddComment")]
-        public async Task<IActionResult> employeeAddComment([FromBody] Comment comment) 
+        public async Task<IActionResult> employeeAddComment([FromBody] Comment comment)
         {
             if (ModelState.IsValid)
             {
-                try 
+                try
                 {
                     Comment newComment = new Comment
                     {
@@ -205,11 +205,11 @@ namespace MedSysApi.Controllers
         }
 
         [HttpPost("memberAddReply")]
-        public async Task<ActionResult> memberAddReply([FromBody] Comment reply) 
+        public async Task<ActionResult> memberAddReply([FromBody] Comment reply)
         {
             if (ModelState.IsValid)
             {
-                try 
+                try
                 {
                     Comment newReply = new Comment
                     {
@@ -217,13 +217,13 @@ namespace MedSysApi.Controllers
                         MemberId = reply.MemberId,
                         EmployeeId = null,
                         ParentCommentId = reply.ParentCommentId,
-                        Content = CheckForInappropriateWords(reply.Content)?MarkAsInappropriate(reply.Content):reply.Content,
+                        Content = CheckForInappropriateWords(reply.Content) ? MarkAsInappropriate(reply.Content) : reply.Content,
                         CreatedAt = DateTime.Now,
                     };
                     _context.Comments.Add(newReply);
                     await _context.SaveChangesAsync();
                     return Ok(new { message = "Reply saved successfully" });
-                } 
+                }
                 catch (Exception ex) { return StatusCode(500, $"An error occured:{ex.Message}"); }
             }
             else
@@ -232,26 +232,26 @@ namespace MedSysApi.Controllers
             }
         }
         [HttpPost("employeeAddReply")]
-        public async Task<IActionResult> employeeAddReply([FromBody] Comment reply) 
+        public async Task<IActionResult> employeeAddReply([FromBody] Comment reply)
         {
-            if (ModelState.IsValid) 
+            if (ModelState.IsValid)
             {
                 try
                 {
                     Comment newReply = new Comment
                     {
-                        BlogId= reply.BlogId,
+                        BlogId = reply.BlogId,
                         MemberId = null,
                         EmployeeId = reply.EmployeeId,
                         ParentCommentId = reply.ParentCommentId,
                         Content = reply.Content,
                         CreatedAt = DateTime.Now,
                     };
-                    _context.Comments.Add(newReply); 
+                    _context.Comments.Add(newReply);
                     await _context.SaveChangesAsync();
                     return Ok(new { message = "Reply saved successfully" });
                 }
-                catch(Exception ex) { return StatusCode(500, $"An error occured:{ex.Message}"); }
+                catch (Exception ex) { return StatusCode(500, $"An error occured:{ex.Message}"); }
             }
             else
             {
